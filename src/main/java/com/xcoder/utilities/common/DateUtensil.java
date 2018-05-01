@@ -202,6 +202,18 @@ public class DateUtensil {
     /**
      * Date compare
      *
+     * @param date0 date0
+     * @param date1 date1
+     * @param sdf   sdf
+     * @return
+     */
+    public static final int dateCompare(final Date date0, final Date date1, final SimpleDateFormat sdf) throws ParseException {
+        return dateCompare(date0, date1, sdf, sdf);
+    }
+
+    /**
+     * Date compare
+     *
      * @param date0    date0
      * @param date1    date1
      * @param pattern0 pattern0
@@ -211,8 +223,25 @@ public class DateUtensil {
      */
     public static final int dateCompare(final Date date0, final Date date1
             , final String pattern0, final String pattern1) throws ParseException {
-        final Date parsedDate0 = parse(date0, pattern0);
-        final Date parsedDate1 = parse(date1, pattern1);
+        final SimpleDateFormat sdf0 = new SimpleDateFormat(pattern0);
+        final SimpleDateFormat sdf1 = new SimpleDateFormat(pattern1);
+        return dateCompare(date0, date1, sdf0, sdf1);
+    }
+
+    /**
+     * Date compare
+     *
+     * @param date0 date0
+     * @param date1 date1
+     * @param sdf0  sdf0
+     * @param sdf1  sdf1
+     * @return
+     * @throws ParseException
+     */
+    public static final int dateCompare(final Date date0, final Date date1
+            , final SimpleDateFormat sdf0, final SimpleDateFormat sdf1) throws ParseException {
+        final Date parsedDate0 = parse(date0, sdf0);
+        final Date parsedDate1 = parse(date1, sdf1);
         return dateCompare(parsedDate0, parsedDate1);
     }
 
