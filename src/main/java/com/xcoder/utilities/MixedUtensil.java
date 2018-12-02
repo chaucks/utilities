@@ -5,6 +5,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
 
+/**
+ * A common util file which comtains most used methods.
+ *
+ * @author chuck lee
+ */
 public class MixedUtensil {
     /**
      * win10 ie ua 标识
