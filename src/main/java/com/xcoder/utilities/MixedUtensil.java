@@ -162,4 +162,45 @@ public class MixedUtensil {
         // IE 360 QQ兼容
         return URLEncoder.encode(fileName, "UTF-8");
     }
+
+    /**
+     * 判断对象是否不为null
+     *
+     * @param object
+     * @return
+     */
+    public static final boolean objectNotNull(final Object object) {
+        return !objectNull(object);
+    }
+
+    /**
+     * 判断对象是否不为null
+     *
+     * @param object
+     * @return
+     */
+    public static final boolean objectNull(final Object object) {
+        return null == object;
+    }
+
+    /**
+     * 对象null异常检测
+     *
+     * @param object
+     */
+    public static final void objectNullPointerException(final Object object) {
+        objectNullPointerException(object, "");
+    }
+
+    /**
+     * 对象null异常检测
+     *
+     * @param object
+     * @param strings
+     */
+    public static final void objectNullPointerException(final Object object, final String... strings) {
+        if (objectNull(object)) {
+            throw new NullPointerException(appendString(strings));
+        }
+    }
 }
