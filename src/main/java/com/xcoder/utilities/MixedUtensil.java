@@ -184,6 +184,52 @@ public class MixedUtensil {
     }
 
     /**
+     * 数组对象null判断
+     *
+     * @param existsNull true 判断数组 不存在 null 对象
+     *                   false 判断数组 存在 非null 对象
+     * @param objects
+     * @return
+     */
+    public static final boolean objectsNotNull(final boolean existsNull, final Object... objects) {
+        return !objectsNull(existsNull, objects);
+    }
+
+    /**
+     * 数组对象null判断
+     *
+     * @param existsNull true 判断数组 存在 null 对象
+     *                   false 判断数组 不存在 非null 对象
+     * @param objects
+     * @return
+     */
+    public static final boolean objectsNull(final boolean existsNull, final Object... objects) {
+        if (objectNull(objects)) {
+            return true;
+        }
+        /**
+         * allNull=true 判断数组 不存在 非null 对象
+         */
+        final boolean allNull = !existsNull;
+        for (Object object : objects) {
+            /**
+             * exists=true 任意一个对象 为null 返回true
+             */
+            if (existsNull && objectNull(object)) {
+                return true;
+            }
+            /**
+             * allNull=true 任意一个对象为 不为null 返回false
+             */
+            if (allNull && objectNotNull(object)) {
+                return false;
+            }
+        }
+        return existsNull ? false : true;
+    }
+
+
+    /**
      * 对象null异常检测
      *
      * @param object
@@ -203,4 +249,27 @@ public class MixedUtensil {
             throw new NullPointerException(appendString(strings));
         }
     }
+
+    /**
+     * 数组对象null异常检测
+     *
+     * @param objects
+     */
+    public static final void objectsNullPointerException(final Object... objects) {
+        objectsNullPointerException(new String[]{""}, objects);
+    }
+
+    /**
+     * 数组对象null异常检测
+     *
+     * @param strings
+     * @param objects
+     */
+    public static final void objectsNullPointerException(final String[] strings, final Object... objects) {
+        if (objectsNull(true, objects)) {
+            throw new NullPointerException(appendString(strings));
+        }
+    }
+
+
 }
