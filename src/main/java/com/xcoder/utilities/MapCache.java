@@ -88,7 +88,7 @@ public class MapCache extends ConcurrentHashMap<String, MapCache.Node> implement
 
     @Override
     public final void run() {
-        for (; ; ) {
+        for (; !Thread.currentThread().isInterrupted(); ) {
             if (this.isEmpty()) {
                 this.tryLockAwait(DEFAULT_TRY_LOCK_TIME_OUT, DEFAULT_AWAIT_TIME);
             }
