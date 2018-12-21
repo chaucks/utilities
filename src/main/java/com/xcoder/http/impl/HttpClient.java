@@ -42,7 +42,7 @@ public class HttpClient implements AutoCloseable {
     public static final String HTTP_CHAR_SET = "UTF-8";
 
     /**
-     * 南农结果集封装
+     * Get Object result.
      *
      * @param url
      * @param clazz
@@ -56,7 +56,7 @@ public class HttpClient implements AutoCloseable {
     }
 
     /**
-     * String结果
+     * Get String result.
      *
      * @param url
      * @param objects
