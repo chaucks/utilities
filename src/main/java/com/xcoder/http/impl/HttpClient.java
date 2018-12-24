@@ -146,20 +146,7 @@ public class HttpClient implements AutoCloseable {
      * @return
      */
     private final StringEntity getStringEntity(final Object... objects) {
-        final JSONObject jsonObject = new JSONObject(8);
-        final int length = objects.length;
-        for (int i = 0; i < length; i++) {
-            Object object = objects[i];
-            if (object instanceof IFileBinaryBody) {
-                continue;
-            }
-            if (object instanceof IStreamBinaryBody) {
-                continue;
-            }
-            jsonObject.put((String) object, objects[++i]);
-        }
-        final String jsonString = jsonObject.toJSONString();
-        return new StringEntity(jsonString, DEFAULT_CONTENT_TYPE_UTF8);
+        return new StringEntity(getJSONString(objects), DEFAULT_CONTENT_TYPE_UTF8);
     }
 
     /**
@@ -247,5 +234,28 @@ public class HttpClient implements AutoCloseable {
             this.autoCloseableCache.set(new ArrayList<>(4));
         }
         this.autoCloseableCache.get().add(body);
+    }
+
+    /**
+     * JSONString
+     *
+     * @param objects
+     * @return
+     */
+    public static final String getJSONString(final Object... objects) {
+        final JSONObject jsonObject = new JSONObject(8);
+        final int length = objects.length;
+        for (int i = 0; i < length; i++) {
+            Object object = objects[i];
+            if (object instanceof IFileBinaryBody) {
+                continue;
+            }
+            if (object instanceof IStreamBinaryBody) {
+                continue;
+            }
+            jsonObject.put((String) object, objects[++i]);
+        }
+        final String jsonString = jsonObject.toJSONString();
+        return jsonString;
     }
 }
