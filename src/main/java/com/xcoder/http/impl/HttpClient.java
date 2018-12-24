@@ -8,6 +8,7 @@ import com.xcoder.http.IStreamBinaryBody;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -30,6 +31,16 @@ public class HttpClient implements AutoCloseable {
      * text body content type
      */
     public static final ContentType MULTIPART_FORM_DATA = ContentType.MULTIPART_FORM_DATA.withCharset("UTF-8");
+
+    /**
+     * default content type
+     */
+    public static final ContentType DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON;
+
+    /**
+     * default content type utf-8 charset
+     */
+    public static final ContentType DEFAULT_CONTENT_TYPE_UTF8 = DEFAULT_CONTENT_TYPE.withCharset("UTF-8");
 
     /**
      * 文件流暂存，释放资源用
@@ -121,15 +132,51 @@ public class HttpClient implements AutoCloseable {
      * @throws IOException
      */
     private final HttpPost getHttpPost(final String url, final Object... objects) {
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        HttpEntity httpEntity = getMultipartEntity(objects);
+//        HttpEntity httpEntity = getStringEntity(objects);
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(httpEntity);
+        return httpPost;
+    }
+
+    /**
+     * String HttpEntity
+     *
+     * @param objects
+     * @return
+     */
+    private final StringEntity getStringEntity(final Object... objects) {
+        final JSONObject jsonObject = new JSONObject(8);
+        final int length = objects.length;
+        for (int i = 0; i < length; i++) {
+            Object object = objects[i];
+            if (object instanceof IFileBinaryBody) {
+                continue;
+            }
+            if (object instanceof IStreamBinaryBody) {
+                continue;
+            }
+            jsonObject.put((String) object, objects[++i]);
+        }
+        final String jsonString = jsonObject.toJSONString();
+        return new StringEntity(jsonString, DEFAULT_CONTENT_TYPE_UTF8);
+    }
+
+    /**
+     * Multipart HttpEntity
+     *
+     * @param objects
+     * @return
+     */
+    private final HttpEntity getMultipartEntity(final Object... objects) {
+        final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.setContentType(DEFAULT_CONTENT_TYPE);
         /**
          * 添加body
          */
         addBody(builder, objects);
-        HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(builder.build());
-        return httpPost;
+        return builder.build();
     }
 
     /**
