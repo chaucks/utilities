@@ -30,7 +30,12 @@ public class HttpClient implements AutoCloseable {
     /**
      * text body content type
      */
-    public static final ContentType MULTIPART_FORM_DATA = ContentType.MULTIPART_FORM_DATA.withCharset("UTF-8");
+    public static final ContentType MULTIPART_FORM_DATA = ContentType.MULTIPART_FORM_DATA;
+
+    /**
+     * text body content type utf-8 charset
+     */
+    public static final ContentType MULTIPART_FORM_DATA_UTF8 = MULTIPART_FORM_DATA.withCharset("UTF-8");
 
     /**
      * default content type
@@ -158,7 +163,7 @@ public class HttpClient implements AutoCloseable {
     private final HttpEntity getMultipartEntity(final Object... objects) {
         final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-        builder.setContentType(DEFAULT_CONTENT_TYPE);
+        builder.setContentType(MULTIPART_FORM_DATA_UTF8);
         /**
          * 添加body
          */
@@ -218,10 +223,10 @@ public class HttpClient implements AutoCloseable {
      */
     private final void addTextBody(final MultipartEntityBuilder builder, final String name, final Object object) {
         if (object instanceof String) {
-            builder.addTextBody(name, (String) object, MULTIPART_FORM_DATA);
+            builder.addTextBody(name, (String) object, MULTIPART_FORM_DATA_UTF8);
             return;
         }
-        builder.addTextBody(name, JSON.toJSONString(object), MULTIPART_FORM_DATA);
+        builder.addTextBody(name, JSON.toJSONString(object), MULTIPART_FORM_DATA_UTF8);
     }
 
     /**
