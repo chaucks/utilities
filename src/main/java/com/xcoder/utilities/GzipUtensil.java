@@ -12,7 +12,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * @author chuck lee.
  */
-public class GzipUtil {
+public class GzipUtensil {
 
     /**
      * 默认编码
