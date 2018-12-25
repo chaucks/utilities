@@ -3,6 +3,7 @@ package com.xcoder.http.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.xcoder.XInterface;
 import com.xcoder.http.IFileBinaryBody;
 import com.xcoder.http.IStreamBinaryBody;
 import org.apache.http.HttpEntity;
@@ -26,7 +27,7 @@ import java.util.Iterator;
  *
  * @author chuck lee.
  */
-public class HttpClient implements AutoCloseable {
+public class HttpClient implements AutoCloseable, XInterface {
     /**
      * text body content type
      */
@@ -35,7 +36,7 @@ public class HttpClient implements AutoCloseable {
     /**
      * text body content type utf-8 charset
      */
-    public static final ContentType MULTIPART_FORM_DATA_UTF8 = MULTIPART_FORM_DATA.withCharset("UTF-8");
+    public static final ContentType MULTIPART_FORM_DATA_UTF8 = MULTIPART_FORM_DATA.withCharset(UTF_8_CHAR_SET);
 
     /**
      * default content type
@@ -45,17 +46,12 @@ public class HttpClient implements AutoCloseable {
     /**
      * default content type utf-8 charset
      */
-    public static final ContentType DEFAULT_CONTENT_TYPE_UTF8 = DEFAULT_CONTENT_TYPE.withCharset("UTF-8");
+    public static final ContentType DEFAULT_CONTENT_TYPE_UTF8 = DEFAULT_CONTENT_TYPE.withCharset(UTF_8_CHAR_SET);
 
     /**
      * 文件流暂存，释放资源用
      */
     private ThreadLocal<Collection<AutoCloseable>> autoCloseableCache = new ThreadLocal<>();
-
-    /**
-     * http char set
-     */
-    public static final String HTTP_CHAR_SET = "UTF-8";
 
     /**
      * Get Object result.
@@ -81,7 +77,7 @@ public class HttpClient implements AutoCloseable {
      */
     public String getResult(final String url, final Object... objects) throws Exception {
         try (InputStream is = getInputStream(url, objects);
-             InputStreamReader isr = new InputStreamReader(is, HTTP_CHAR_SET);
+             InputStreamReader isr = new InputStreamReader(is, UTF_8_CHAR_SET);
              BufferedReader br = new BufferedReader(isr);
              AutoCloseable ac = this) {
             StringBuilder sb = new StringBuilder(200);

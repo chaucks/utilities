@@ -1,6 +1,7 @@
 package com.xcoder.utilities;
 
 import com.alibaba.fastjson.JSON;
+import com.xcoder.XInterface;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,18 +13,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * @author chuck lee.
  */
-public class GzipUtensil {
-
-    /**
-     * 默认编码
-     */
-    public static final String DEFAULT_CHAR_SET = "ISO-8859-1";
-
-    /**
-     * UTF-8编码
-     */
-    public static final String UTF8_CHAR_SET = "UTF-8";
-
+public class GzipUtensil implements XInterface {
     /**
      * gzip 压缩
      *

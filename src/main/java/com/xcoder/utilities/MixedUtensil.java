@@ -1,5 +1,7 @@
 package com.xcoder.utilities;
 
+import com.xcoder.XInterface;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -10,7 +12,7 @@ import java.util.Collection;
  *
  * @author chuck lee
  */
-public class MixedUtensil {
+public class MixedUtensil implements XInterface {
     /**
      * win10 ie ua 标识
      */
@@ -157,10 +159,10 @@ public class MixedUtensil {
     public static final String getAndEncodingFileName(final String fileName
             , final String userAgent) throws UnsupportedEncodingException {
         if (isNotIE(userAgent)) {
-            return new String(fileName.getBytes("UTF-8"), "iso8859-1");
+            return new String(fileName.getBytes(UTF_8_CHAR_SET), ISO_8859_1_CHAR_SET);
         }
         // IE 360 QQ兼容
-        return URLEncoder.encode(fileName, "UTF-8");
+        return URLEncoder.encode(fileName, UTF_8_CHAR_SET);
     }
 
     /**
