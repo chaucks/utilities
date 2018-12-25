@@ -71,7 +71,7 @@ public class GzipUtensil {
      * @return
      * @throws IOException
      */
-    public static final byte[] deCompress(final byte[] bytes) throws IOException {
+    public static final byte[] uncompress(final byte[] bytes) throws IOException {
         if (MixedUtensil.arrayEmpty(bytes)) {
             return null;
         }
