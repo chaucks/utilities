@@ -1,6 +1,6 @@
 package com.xcoder.utilities;
 
-import com.xcoder.XInterface;
+import com.xcoder.IUniversal;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -12,7 +12,7 @@ import java.util.Collection;
  *
  * @author chuck lee
  */
-public class MixedUtensil implements XInterface {
+public class MixedUtensil implements IUniversal {
     /**
      * win10 ie ua 标识
      */

@@ -1,9 +1,11 @@
 package com.xcoder;
 
 /**
+ * 通用接口
+ *
  * @author chuck lee.
  */
-public interface XInterface {
+public interface IUniversal {
     /**
      * ISO-8859-1编码
      */

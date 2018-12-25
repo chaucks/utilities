@@ -1,7 +1,7 @@
 package com.xcoder.utilities;
 
 import com.alibaba.fastjson.JSON;
-import com.xcoder.XInterface;
+import com.xcoder.IUniversal;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,7 +13,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * @author chuck lee.
  */
-public class GzipUtensil implements XInterface {
+public class GzipUtensil implements IUniversal {
     /**
      * gzip 压缩
      *
