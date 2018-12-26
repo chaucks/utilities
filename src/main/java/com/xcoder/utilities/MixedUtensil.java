@@ -5,7 +5,7 @@ import com.xcoder.IUniversal;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
@@ -26,7 +26,17 @@ public class MixedUtensil implements IUniversal {
     public static final int DEFAULT_STRING_BUFFER_CAPACITY = 100;
 
     /**
-     * 日期格式 jdk8 推荐 immutable 意味着 static下线程安全 配合 Instant 食用更佳
+     * jdk8 推荐日期格式化工具类 immutable 线程安全
+     * LocalDate 2010-12-03
+     * LocalTIME 11:05:03
+     * LocalDateTime 2010-12-03T11:05:03
+     * OffsetTime 11:05:03+01:00
+     * OffsetDateTime 2010-12-03T11:05:03+01:00
+     * ZonedDateTime 2010-12-03T11:05:03+01:00 Europe/Paris 时区相关
+     * Year 2010
+     * YearMonth 2010-12
+     * MonthDay -12-01
+     * Instant 2576458258.266 seconds after 1970-01-01
      */
     public static final DateTimeFormatter DEFAULT_DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -276,6 +286,6 @@ public class MixedUtensil implements IUniversal {
      * @return
      */
     public static final String getFormatNow() {
-        return DEFAULT_DTF.format(Instant.now());
+        return DEFAULT_DTF.format(LocalDateTime.now());
     }
 }
