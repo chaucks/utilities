@@ -3,7 +3,7 @@ package com.xcoder.http.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.xcoder.XInterface;
+import com.xcoder.IUniversal;
 import com.xcoder.http.IFileBinaryBody;
 import com.xcoder.http.IStreamBinaryBody;
 import org.apache.http.HttpEntity;
@@ -27,7 +27,7 @@ import java.util.Iterator;
  *
  * @author chuck lee.
  */
-public class HttpClient implements AutoCloseable, XInterface {
+public class HttpClient implements AutoCloseable, IUniversal {
     /**
      * text body content type
      */
