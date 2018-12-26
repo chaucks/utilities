@@ -5,6 +5,8 @@ import com.xcoder.IUniversal;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 /**
@@ -22,6 +24,11 @@ public class MixedUtensil implements IUniversal {
      * 字符串处理，默认StringBuffer capacity
      */
     public static final int DEFAULT_STRING_BUFFER_CAPACITY = 100;
+
+    /**
+     * 日期格式 jdk8 推荐 immutable 意味着 static下线程安全 配合 Instant 食用更佳
+     */
+    public static final DateTimeFormatter DEFAULT_DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Integer 转 String
@@ -263,5 +270,12 @@ public class MixedUtensil implements IUniversal {
         }
     }
 
-
+    /**
+     * 获取默认格式的当前时间字符串
+     *
+     * @return
+     */
+    public static final String getFormatNow() {
+        return DEFAULT_DTF.format(Instant.now());
+    }
 }
