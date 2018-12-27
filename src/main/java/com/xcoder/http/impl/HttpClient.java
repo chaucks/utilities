@@ -51,7 +51,15 @@ public class HttpClient implements AutoCloseable, IUniversal {
     /**
      * 文件流暂存，释放资源用
      */
-    private ThreadLocal<Collection<AutoCloseable>> autoCloseableCache = new ThreadLocal<>();
+    private static final ThreadLocal<Collection<AutoCloseable>> AUTO_CLOSEABLE_CACHE = new ThreadLocal<>();
+
+    /**
+     * HTTP CLIENT
+     */
+    private static final HttpClient HTTP_CLIENT = new HttpClient();
+
+    public HttpClient() {
+    }
 
     /**
      * Get Object result.
@@ -63,7 +71,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @return
      * @throws Exception
      */
-    public <T> T getResult(final String url, final Class<T> clazz, final Object... objects) throws Exception {
+    public static <T> T getResult(final String url, final Class<T> clazz, final Object... objects) throws Exception {
         return JSONObject.parseObject(getResult(url, objects), clazz);
     }
 
@@ -75,11 +83,11 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @return
      * @throws Exception
      */
-    public String getResult(final String url, final Object... objects) throws Exception {
+    public static String getResult(final String url, final Object... objects) throws Exception {
         try (InputStream is = getInputStream(url, objects);
              InputStreamReader isr = new InputStreamReader(is, UTF_8_CHAR_SET);
              BufferedReader br = new BufferedReader(isr);
-             AutoCloseable ac = this) {
+             AutoCloseable ac = HTTP_CLIENT) {
             StringBuilder sb = new StringBuilder(200);
             for (String line = br.readLine(); null != line; line = br.readLine()) {
                 sb.append(line);
@@ -96,7 +104,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      */
     @Override
     public final void close() throws Exception {
-        final Collection<AutoCloseable> caches = this.autoCloseableCache.get();
+        final Collection<AutoCloseable> caches = AUTO_CLOSEABLE_CACHE.get();
         if (null == caches) {
             return;
         }
@@ -105,7 +113,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
             iterator.next().close();
             iterator.remove();
         }
-        this.autoCloseableCache.remove();
+        AUTO_CLOSEABLE_CACHE.remove();
     }
 
     /**
@@ -116,7 +124,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @return
      * @throws IOException
      */
-    private final InputStream getInputStream(final String url, final Object... objects) throws IOException {
+    private static final InputStream getInputStream(final String url, final Object... objects) throws IOException {
         HttpEntity httpEntity = HttpClients.createDefault().execute(getHttpPost(url, objects)).getEntity();
         if (null != httpEntity) {
             return httpEntity.getContent();
@@ -132,7 +140,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @return
      * @throws IOException
      */
-    private final HttpPost getHttpPost(final String url, final Object... objects) {
+    private static final HttpPost getHttpPost(final String url, final Object... objects) {
         HttpEntity httpEntity = getMultipartEntity(objects);
 //        HttpEntity httpEntity = getStringEntity(objects);
         HttpPost httpPost = new HttpPost(url);
@@ -146,7 +154,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @param objects
      * @return
      */
-    private final StringEntity getStringEntity(final Object... objects) {
+    private static final StringEntity getStringEntity(final Object... objects) {
         return new StringEntity(getJSONString(objects), DEFAULT_CONTENT_TYPE_UTF8);
     }
 
@@ -156,7 +164,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @param objects
      * @return
      */
-    private final HttpEntity getMultipartEntity(final Object... objects) {
+    private static final HttpEntity getMultipartEntity(final Object... objects) {
         final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         builder.setContentType(MULTIPART_FORM_DATA_UTF8);
@@ -173,7 +181,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @param builder
      * @param objects
      */
-    private final void addBody(final MultipartEntityBuilder builder, final Object... objects) {
+    private static final void addBody(final MultipartEntityBuilder builder, final Object... objects) {
         final int length = objects.length;
         for (int i = 0; i < length; i++) {
             Object object = objects[i];
@@ -195,7 +203,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @param builder
      * @param body
      */
-    private final void addBinaryBody(final MultipartEntityBuilder builder, final IFileBinaryBody body) {
+    private static final void addBinaryBody(final MultipartEntityBuilder builder, final IFileBinaryBody body) {
         builder.addBinaryBody(body.getName(), body.getFile(), body.getContentType(), body.getFileName());
     }
 
@@ -205,7 +213,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @param builder
      * @param body
      */
-    private final void addBinaryBody(final MultipartEntityBuilder builder, final IStreamBinaryBody body) {
+    private static final void addBinaryBody(final MultipartEntityBuilder builder, final IStreamBinaryBody body) {
         builder.addBinaryBody(body.getName(), body.getStream(), body.getContentType(), body.getFileName());
         cacheIStreamBinaryBody(body);
     }
@@ -217,7 +225,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @param name
      * @param object
      */
-    private final void addTextBody(final MultipartEntityBuilder builder, final String name, final Object object) {
+    private static final void addTextBody(final MultipartEntityBuilder builder, final String name, final Object object) {
         if (object instanceof String) {
             builder.addTextBody(name, (String) object, MULTIPART_FORM_DATA_UTF8);
             return;
@@ -230,11 +238,11 @@ public class HttpClient implements AutoCloseable, IUniversal {
      *
      * @param body
      */
-    private final void cacheIStreamBinaryBody(final IStreamBinaryBody body) {
-        if (null == this.autoCloseableCache.get()) {
-            this.autoCloseableCache.set(new ArrayList<>(4));
+    private static final void cacheIStreamBinaryBody(final IStreamBinaryBody body) {
+        if (null == AUTO_CLOSEABLE_CACHE.get()) {
+            AUTO_CLOSEABLE_CACHE.set(new ArrayList<>(4));
         }
-        this.autoCloseableCache.get().add(body);
+        AUTO_CLOSEABLE_CACHE.get().add(body);
     }
 
     /**
