@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xcoder.IUniversal;
 import com.xcoder.http.IFileBinaryBody;
 import com.xcoder.http.IStreamBinaryBody;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -23,11 +24,11 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Http Client
+ * Abstract Http Client
  *
  * @author chuck lee.
  */
-public class HttpClient implements AutoCloseable, IUniversal {
+public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * text body content type
      */
@@ -54,12 +55,29 @@ public class HttpClient implements AutoCloseable, IUniversal {
     private static final ThreadLocal<Collection<AutoCloseable>> AUTO_CLOSEABLE_CACHE = new ThreadLocal<>();
 
     /**
-     * HTTP CLIENT
+     * Http server address (ip:port)
      */
-    private static final HttpClient HTTP_CLIENT = new HttpClient();
+    private final String serverAddress;
 
-    public HttpClient() {
+    /**
+     * Constructor with server address
+     *
+     * @param serverAddress ip:port
+     */
+    public AbstractHttpClient(final String serverAddress) {
+        if (StringUtils.isEmpty(serverAddress)) {
+            throw new RuntimeException("Http server address can not be null. Please check...");
+        }
+        this.serverAddress = serverAddress;
     }
+
+    /**
+     * Get http entry.
+     *
+     * @param objects
+     * @return
+     */
+    public abstract HttpEntity getHttpEntity(final Object... objects);
 
     /**
      * Get Object result.
@@ -71,7 +89,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @return
      * @throws Exception
      */
-    public static <T> T getResult(final String url, final Class<T> clazz, final Object... objects) throws Exception {
+    public <T> T getResult(final String url, final Class<T> clazz, final Object... objects) throws Exception {
         return JSONObject.parseObject(getResult(url, objects), clazz);
     }
 
@@ -83,11 +101,11 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @return
      * @throws Exception
      */
-    public static String getResult(final String url, final Object... objects) throws Exception {
+    public final String getResult(final String url, final Object... objects) throws Exception {
         try (InputStream is = getInputStream(url, objects);
              InputStreamReader isr = new InputStreamReader(is, UTF_8_CHAR_SET);
              BufferedReader br = new BufferedReader(isr);
-             AutoCloseable ac = HTTP_CLIENT) {
+             AutoCloseable ac = this) {
             StringBuilder sb = new StringBuilder(200);
             for (String line = br.readLine(); null != line; line = br.readLine()) {
                 sb.append(line);
@@ -124,7 +142,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @return
      * @throws IOException
      */
-    private static final InputStream getInputStream(final String url, final Object... objects) throws IOException {
+    private final InputStream getInputStream(final String url, final Object... objects) throws IOException {
         HttpEntity httpEntity = HttpClients.createDefault().execute(getHttpPost(url, objects)).getEntity();
         if (null != httpEntity) {
             return httpEntity.getContent();
@@ -140,9 +158,8 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @return
      * @throws IOException
      */
-    private static final HttpPost getHttpPost(final String url, final Object... objects) {
-        HttpEntity httpEntity = getMultipartEntity(objects);
-//        HttpEntity httpEntity = getStringEntity(objects);
+    private final HttpPost getHttpPost(final String url, final Object... objects) {
+        HttpEntity httpEntity = getHttpEntity(objects);
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(httpEntity);
         return httpPost;
@@ -154,7 +171,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @param objects
      * @return
      */
-    private static final StringEntity getStringEntity(final Object... objects) {
+    public static final StringEntity getStringEntity(final Object... objects) {
         return new StringEntity(getJSONString(objects), DEFAULT_CONTENT_TYPE_UTF8);
     }
 
@@ -164,7 +181,7 @@ public class HttpClient implements AutoCloseable, IUniversal {
      * @param objects
      * @return
      */
-    private static final HttpEntity getMultipartEntity(final Object... objects) {
+    public static final HttpEntity getMultipartEntity(final Object... objects) {
         final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         builder.setContentType(MULTIPART_FORM_DATA_UTF8);
