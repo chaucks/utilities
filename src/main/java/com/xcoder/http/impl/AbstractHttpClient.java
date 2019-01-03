@@ -143,7 +143,7 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
      * @throws IOException
      */
     private final InputStream getInputStream(final String url, final Object... objects) throws IOException {
-        HttpEntity httpEntity = HttpClients.createDefault().execute(getHttpPost(url, objects)).getEntity();
+        final HttpEntity httpEntity = HttpClients.createDefault().execute(getHttpPost(url, objects)).getEntity();
         if (null != httpEntity) {
             return httpEntity.getContent();
         }
@@ -159,8 +159,8 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
      * @throws IOException
      */
     private final HttpPost getHttpPost(final String url, final Object... objects) {
-        HttpEntity httpEntity = getHttpEntity(objects);
-        HttpPost httpPost = new HttpPost(url);
+        final HttpPost httpPost = new HttpPost(this.serverAddress + url);
+        final HttpEntity httpEntity = getHttpEntity(objects);
         httpPost.setEntity(httpEntity);
         return httpPost;
     }
