@@ -8,6 +8,7 @@ import com.xcoder.http.IFileBinaryBody;
 import com.xcoder.http.IStreamBinaryBody;
 import com.xcoder.utilities.MixedUtensil;
 import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
@@ -127,7 +128,8 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      */
     public final String getResult(final String url, final Object... objects) throws Exception {
         try (final CloseableHttpClient client = HttpClients.createDefault();
-             final InputStream is = getInputStream(client, url, objects);
+             final CloseableHttpResponse chr = getCloseableHttpResponse(client, url, objects);
+             final InputStream is = getInputStream(chr);
              final InputStreamReader isr = getInputStreamReaderUTF8(is);
              final BufferedReader br = new BufferedReader(isr);
              final AutoCloseable ac = this) {
@@ -160,17 +162,29 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     }
 
     /**
-     * 获取流
+     * Get closeable http response.
      *
      * @param client  client
      * @param url     url
      * @param objects objects
      * @return
+     * @throws Exception
+     */
+    private final CloseableHttpResponse getCloseableHttpResponse(final CloseableHttpClient client, final String url, final Object... objects) throws Exception {
+        final HttpRequestBase httpRequestBase = this.getHttpRequestBase(url, objects);
+        final CloseableHttpResponse closeableHttpResponse = client.execute(httpRequestBase);
+        return closeableHttpResponse;
+    }
+
+    /**
+     * 获取流
+     *
+     * @param closeableHttpResponse closeableHttpResponse
+     * @return
      * @throws IOException
      */
-    private final InputStream getInputStream(final CloseableHttpClient client, final String url, final Object... objects) throws IOException {
-        final HttpRequestBase httpRequestBase = this.getHttpRequestBase(url, objects);
-        final HttpEntity httpEntity = client.execute(httpRequestBase).getEntity();
+    private final InputStream getInputStream(final CloseableHttpResponse closeableHttpResponse) throws IOException {
+        final HttpEntity httpEntity = closeableHttpResponse.getEntity();
         return httpEntity.getContent();
     }
 
