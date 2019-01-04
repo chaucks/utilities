@@ -59,10 +59,10 @@ public class HttpClient extends AbstractHttpClient {
     /**
      * Http post request and response.
      *
-     * @param url
-     * @param clazz
-     * @param objects
-     * @param <T>
+     * @param url     url
+     * @param clazz   clazz
+     * @param objects objects
+     * @param <T>     T
      * @return
      * @throws Exception
      */
