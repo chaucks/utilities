@@ -6,19 +6,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.xcoder.IUniversal;
 import com.xcoder.http.IFileBinaryBody;
 import com.xcoder.http.IStreamBinaryBody;
-import org.apache.commons.lang3.StringUtils;
+import com.xcoder.utilities.MixedUtensil;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -65,9 +63,7 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
      * @param serverAddress ip:port
      */
     public AbstractHttpClient(final String serverAddress) {
-        if (StringUtils.isEmpty(serverAddress)) {
-            throw new RuntimeException("Http server address can not be null. Please check...");
-        }
+        MixedUtensil.stringEmptyRuntimeException(serverAddress, "Http server address can not be null. Please check...");
         this.serverAddress = serverAddress;
     }
 
@@ -102,11 +98,12 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
      * @throws Exception
      */
     public final String getResult(final String url, final Object... objects) throws Exception {
-        try (InputStream is = getInputStream(url, objects);
-             InputStreamReader isr = new InputStreamReader(is, UTF_8_CHAR_SET);
-             BufferedReader br = new BufferedReader(isr);
-             AutoCloseable ac = this) {
-            StringBuilder sb = new StringBuilder(200);
+        try (final CloseableHttpClient client = HttpClients.createDefault();
+             final InputStream is = getInputStream(client, url, objects);
+             final InputStreamReader isr = getInputStreamReaderUTF8(is);
+             final BufferedReader br = new BufferedReader(isr);
+             final AutoCloseable ac = this) {
+            final StringBuilder sb = new StringBuilder(200);
             for (String line = br.readLine(); null != line; line = br.readLine()) {
                 sb.append(line);
             }
@@ -137,17 +134,28 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * 获取流
      *
+     * @param client
      * @param url
      * @param objects
      * @return
      * @throws IOException
      */
-    private final InputStream getInputStream(final String url, final Object... objects) throws IOException {
-        final HttpEntity httpEntity = HttpClients.createDefault().execute(getHttpPost(url, objects)).getEntity();
+    private final InputStream getInputStream(final CloseableHttpClient client, final String url, final Object... objects) throws IOException {
+        final HttpEntity httpEntity = client.execute(getHttpPost(url, objects)).getEntity();
         if (null != httpEntity) {
             return httpEntity.getContent();
         }
         return null;
+    }
+
+    /**
+     * Get UTF-8 InputStreamReader
+     *
+     * @param inputStream
+     * @return
+     */
+    private static final InputStreamReader getInputStreamReaderUTF8(final InputStream inputStream) throws UnsupportedEncodingException {
+        return new InputStreamReader(inputStream, UTF_8_CHAR_SET);
     }
 
     /**

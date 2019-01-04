@@ -1,6 +1,7 @@
 package com.xcoder.utilities;
 
 import com.xcoder.IUniversal;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -281,6 +282,18 @@ public class MixedUtensil implements IUniversal {
     }
 
     /**
+     * 字符串empty异常检测
+     *
+     * @param string
+     * @param strings
+     */
+    public static final void stringEmptyRuntimeException(final String string, final String... strings) {
+        if (StringUtils.isEmpty(string)) {
+            throw new RuntimeException(appendString(strings));
+        }
+    }
+
+    /**
      * 获取默认格式的当前时间字符串
      *
      * @return
@@ -288,4 +301,6 @@ public class MixedUtensil implements IUniversal {
     public static final String getFormatNow() {
         return DEFAULT_DTF.format(LocalDateTime.now());
     }
+
+
 }
