@@ -6,9 +6,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.xcoder.IUniversal;
 import com.xcoder.http.IFileBinaryBody;
 import com.xcoder.http.IStreamBinaryBody;
-import com.xcoder.utilities.MixedUtensil;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -26,7 +26,7 @@ import java.util.Iterator;
  *
  * @author chuck lee.
  */
-public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
+public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     /**
      * text body content type
      */
@@ -53,35 +53,41 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     private static final ThreadLocal<Collection<AutoCloseable>> AUTO_CLOSEABLE_CACHE = new ThreadLocal<>();
 
     /**
-     * Http server address (ip:port)
+     * Default rest http client.
      */
-    private final String serverAddress;
+    public static final AbstractHttpClient DEFAULT_POST_CLIENT_REST = new AbstractHttpClient() {
+        @Override
+        public HttpRequestBase getHttpRequestBase(String url, Object... objects) {
+            return getHttpPostRest(url, objects);
+        }
+    };
 
     /**
-     * Constructor with server address
-     *
-     * @param serverAddress ip:port
+     * Default http client.
      */
-    public AbstractHttpClient(final String serverAddress) {
-        MixedUtensil.stringEmptyRuntimeException(serverAddress, "Http server address can not be null. Please check...");
-        this.serverAddress = serverAddress;
-    }
+    public static final AbstractHttpClient DEFAULT_POST_CLIENT = new AbstractHttpClient() {
+        @Override
+        public HttpRequestBase getHttpRequestBase(String url, Object... objects) {
+            return getHttpPost(url, objects);
+        }
+    };
 
     /**
-     * Get http entry.
+     * Get HttpRequestBase.
      *
-     * @param objects
+     * @param url     url
+     * @param objects objects
      * @return
      */
-    public abstract HttpEntity getHttpEntity(final Object... objects);
+    public abstract HttpRequestBase getHttpRequestBase(final String url, final Object... objects);
 
     /**
      * Get Object result.
      *
-     * @param url
-     * @param clazz
-     * @param objects
-     * @param <T>
+     * @param url     url
+     * @param clazz   clazz
+     * @param objects objects
+     * @param <T>     T
      * @return
      * @throws Exception
      */
@@ -92,8 +98,8 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * Get String result.
      *
-     * @param url
-     * @param objects
+     * @param url     url
+     * @param objects objects
      * @return
      * @throws Exception
      */
@@ -134,24 +140,22 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * 获取流
      *
-     * @param client
-     * @param url
-     * @param objects
+     * @param client  client
+     * @param url     url
+     * @param objects objects
      * @return
      * @throws IOException
      */
     private final InputStream getInputStream(final CloseableHttpClient client, final String url, final Object... objects) throws IOException {
-        final HttpEntity httpEntity = client.execute(getHttpPost(url, objects)).getEntity();
-        if (null != httpEntity) {
-            return httpEntity.getContent();
-        }
-        return null;
+        final HttpRequestBase httpRequestBase = this.getHttpRequestBase(url, objects);
+        final HttpEntity httpEntity = client.execute(httpRequestBase).getEntity();
+        return httpEntity.getContent();
     }
 
     /**
      * Get UTF-8 InputStreamReader
      *
-     * @param inputStream
+     * @param inputStream inputStream
      * @return
      */
     private static final InputStreamReader getInputStreamReaderUTF8(final InputStream inputStream) throws UnsupportedEncodingException {
@@ -161,22 +165,33 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * 获取HttpPost
      *
-     * @param url
-     * @param objects
+     * @param url     url
+     * @param objects objects
      * @return
      * @throws IOException
      */
-    private final HttpPost getHttpPost(final String url, final Object... objects) {
-        final HttpPost httpPost = new HttpPost(this.serverAddress + url);
-        final HttpEntity httpEntity = getHttpEntity(objects);
-        httpPost.setEntity(httpEntity);
-        return httpPost;
+    public static final HttpPost getHttpPostRest(final String url, final Object... objects) {
+        final HttpEntity httpEntity = getStringEntity(objects);
+        return getHttpPost(url, httpEntity);
+    }
+
+    /**
+     * 获取HttpPost
+     *
+     * @param url     url
+     * @param objects objects
+     * @return
+     * @throws IOException
+     */
+    public static final HttpPost getHttpPost(final String url, final Object... objects) {
+        final HttpEntity httpEntity = getMultipartEntity(objects);
+        return getHttpPost(url, httpEntity);
     }
 
     /**
      * String HttpEntity
      *
-     * @param objects
+     * @param objects objects
      * @return
      */
     public static final StringEntity getStringEntity(final Object... objects) {
@@ -186,7 +201,7 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * Multipart HttpEntity
      *
-     * @param objects
+     * @param objects objects
      * @return
      */
     public static final HttpEntity getMultipartEntity(final Object... objects) {
@@ -201,10 +216,23 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     }
 
     /**
+     * New HttpPost and set HttpEntity.
+     *
+     * @param url        url
+     * @param httpEntity HttpEntity
+     * @return
+     */
+    private static final HttpPost getHttpPost(final String url, final HttpEntity httpEntity) {
+        final HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(httpEntity);
+        return httpPost;
+    }
+
+    /**
      * 添加body
      *
-     * @param builder
-     * @param objects
+     * @param builder builder
+     * @param objects objects
      */
     private static final void addBody(final MultipartEntityBuilder builder, final Object... objects) {
         final int length = objects.length;
@@ -225,8 +253,8 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * 添加文件body
      *
-     * @param builder
-     * @param body
+     * @param builder builder
+     * @param body    body
      */
     private static final void addBinaryBody(final MultipartEntityBuilder builder, final IFileBinaryBody body) {
         builder.addBinaryBody(body.getName(), body.getFile(), body.getContentType(), body.getFileName());
@@ -235,8 +263,8 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * 添加文件流body
      *
-     * @param builder
-     * @param body
+     * @param builder builder
+     * @param body    body
      */
     private static final void addBinaryBody(final MultipartEntityBuilder builder, final IStreamBinaryBody body) {
         builder.addBinaryBody(body.getName(), body.getStream(), body.getContentType(), body.getFileName());
@@ -246,9 +274,9 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * 添加文本body
      *
-     * @param builder
-     * @param name
-     * @param object
+     * @param builder builder
+     * @param name    name
+     * @param object  object
      */
     private static final void addTextBody(final MultipartEntityBuilder builder, final String name, final Object object) {
         if (object instanceof String) {
@@ -261,7 +289,7 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * 缓存文件流body
      *
-     * @param body
+     * @param body body
      */
     private static final void cacheIStreamBinaryBody(final IStreamBinaryBody body) {
         if (null == AUTO_CLOSEABLE_CACHE.get()) {
@@ -273,7 +301,7 @@ public abstract class AbstractHttpClient implements AutoCloseable, IUniversal {
     /**
      * JSONString
      *
-     * @param objects
+     * @param objects objects
      * @return
      */
     public static final String getJSONString(final Object... objects) {
