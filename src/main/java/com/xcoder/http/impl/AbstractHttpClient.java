@@ -16,6 +16,7 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.protocol.HTTP;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,24 +30,44 @@ import java.util.Iterator;
  */
 public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     /**
-     * text body content type
+     * multipart/form-data content type
      */
-    public static final ContentType MULTIPART_FORM_DATA = ContentType.MULTIPART_FORM_DATA;
+    public static final ContentType MULTIPART_FORM_DATA_CONTENT_TYPE = ContentType.MULTIPART_FORM_DATA;
 
     /**
-     * text body content type utf-8 charset
+     * multipart/form-data utf-8 charset content type
      */
-    public static final ContentType MULTIPART_FORM_DATA_UTF8 = MULTIPART_FORM_DATA.withCharset(UTF_8_CHAR_SET);
+    public static final ContentType MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE = MULTIPART_FORM_DATA_CONTENT_TYPE.withCharset(UTF_8_CHAR_SET);
 
     /**
-     * default content type
+     * multipart/form-data content type string
      */
-    public static final ContentType DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON;
+    public static final String MULTIPART_FORM_DATA_CONTENT_TYPE_STRING = MULTIPART_FORM_DATA_CONTENT_TYPE.toString();
 
     /**
-     * default content type utf-8 charset
+     * multipart/form-data utf-8 charset content type string
      */
-    public static final ContentType DEFAULT_CONTENT_TYPE_UTF8 = DEFAULT_CONTENT_TYPE.withCharset(UTF_8_CHAR_SET);
+    public static final String MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE_STRING = MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE.toString();
+
+    /**
+     * application/json content type
+     */
+    public static final ContentType APPLICATION_JSON_CONTENT_TYPE = ContentType.APPLICATION_JSON;
+
+    /**
+     * application/json utf-8 charset content type
+     */
+    public static final ContentType APPLICATION_JSON_UTF8_CONTENT_TYPE = APPLICATION_JSON_CONTENT_TYPE.withCharset(UTF_8_CHAR_SET);
+
+    /**
+     * application/json content type string
+     */
+    public static final String APPLICATION_JSON_CONTENT_TYPE_STRING = APPLICATION_JSON_CONTENT_TYPE.toString();
+
+    /**
+     * application/json utf-8 charset content type string
+     */
+    public static final String APPLICATION_JSON_UTF8_CONTENT_TYPE_STRING = APPLICATION_JSON_UTF8_CONTENT_TYPE.toString();
 
     /**
      * 文件流暂存，释放资源用
@@ -54,7 +75,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     private static final ThreadLocal<Collection<AutoCloseable>> AUTO_CLOSEABLE_CACHE = new ThreadLocal<>();
 
     /**
-     * Default rest http client.
+     * Default rest http client
      */
     public static final AbstractHttpClient DEFAULT_POST_CLIENT_REST = new AbstractHttpClient() {
         @Override
@@ -64,7 +85,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     };
 
     /**
-     * Default http client.
+     * Default http client
      */
     public static final AbstractHttpClient DEFAULT_POST_CLIENT = new AbstractHttpClient() {
         @Override
@@ -74,7 +95,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     };
 
     /**
-     * Get HttpRequestBase.
+     * Get HttpRequestBase
      *
      * @param url     url
      * @param objects objects
@@ -83,7 +104,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     public abstract HttpRequestBase getHttpRequestBase(final String url, final Object... objects);
 
     /**
-     * Get Object result.
+     * Get Object result
      *
      * @param url     url
      * @param clazz   clazz
@@ -97,7 +118,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     }
 
     /**
-     * Get String result.
+     * Get String result
      *
      * @param url     url
      * @param objects objects
@@ -173,7 +194,9 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      */
     public static final HttpPost getHttpPostRest(final String url, final Object... objects) {
         final HttpEntity httpEntity = getStringEntity(objects);
-        return getHttpPost(url, httpEntity);
+        final HttpPost httpPost = getHttpPost(url, httpEntity);
+        httpPost.addHeader(HTTP.CONTENT_TYPE, APPLICATION_JSON_UTF8_CONTENT_TYPE_STRING);
+        return httpPost;
     }
 
     /**
@@ -186,7 +209,9 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      */
     public static final HttpPost getHttpPost(final String url, final Object... objects) {
         final HttpEntity httpEntity = getMultipartEntity(objects);
-        return getHttpPost(url, httpEntity);
+        final HttpPost httpPost = getHttpPost(url, httpEntity);
+        httpPost.addHeader(HTTP.CONTENT_TYPE, MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE_STRING);
+        return httpPost;
     }
 
     /**
@@ -196,7 +221,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      * @return
      */
     public static final StringEntity getStringEntity(final Object... objects) {
-        return new StringEntity(getJSONString(objects), DEFAULT_CONTENT_TYPE_UTF8);
+        return new StringEntity(getJSONString(objects), APPLICATION_JSON_UTF8_CONTENT_TYPE);
     }
 
     /**
@@ -208,7 +233,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     public static final HttpEntity getMultipartEntity(final Object... objects) {
         final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-        builder.setContentType(MULTIPART_FORM_DATA_UTF8);
+        builder.setContentType(MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE);
         /**
          * 添加body
          */
@@ -217,7 +242,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     }
 
     /**
-     * New HttpPost and set HttpEntity.
+     * New HttpPost and set HttpEntity
      *
      * @param url        url
      * @param httpEntity HttpEntity
@@ -310,10 +335,10 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      */
     private static final void addTextBody(final MultipartEntityBuilder builder, final String name, final Object object) {
         if (object instanceof String) {
-            builder.addTextBody(name, (String) object, MULTIPART_FORM_DATA_UTF8);
+            builder.addTextBody(name, (String) object, MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE);
             return;
         }
-        builder.addTextBody(name, JSON.toJSONString(object), MULTIPART_FORM_DATA_UTF8);
+        builder.addTextBody(name, JSON.toJSONString(object), MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE);
     }
 
     /**
