@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xcoder.IUniversal;
 import com.xcoder.http.IFileBinaryBody;
 import com.xcoder.http.IStreamBinaryBody;
+import com.xcoder.utilities.MixedUtensil;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -57,7 +58,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      */
     public static final AbstractHttpClient DEFAULT_POST_CLIENT_REST = new AbstractHttpClient() {
         @Override
-        public HttpRequestBase getHttpRequestBase(String url, Object... objects) {
+        public HttpRequestBase getHttpRequestBase(final String url, final Object... objects) {
             return getHttpPostRest(url, objects);
         }
     };
@@ -229,12 +230,41 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     }
 
     /**
+     * JSONString
+     *
+     * @param objects objects
+     * @return
+     */
+    public static final String getJSONString(final Object... objects) {
+        if (MixedUtensil.arrayEmpty(objects)) {
+            return "";
+        }
+        final JSONObject jsonObject = new JSONObject(8);
+        final int length = objects.length;
+        for (int i = 0; i < length; i++) {
+            Object object = objects[i];
+            if (object instanceof IFileBinaryBody) {
+                continue;
+            }
+            if (object instanceof IStreamBinaryBody) {
+                continue;
+            }
+            jsonObject.put((String) object, objects[++i]);
+        }
+        final String jsonString = jsonObject.toJSONString();
+        return jsonString;
+    }
+
+    /**
      * 添加body
      *
      * @param builder builder
      * @param objects objects
      */
     private static final void addBody(final MultipartEntityBuilder builder, final Object... objects) {
+        if (MixedUtensil.arrayEmpty(objects)) {
+            return;
+        }
         final int length = objects.length;
         for (int i = 0; i < length; i++) {
             Object object = objects[i];
@@ -298,26 +328,4 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
         AUTO_CLOSEABLE_CACHE.get().add(body);
     }
 
-    /**
-     * JSONString
-     *
-     * @param objects objects
-     * @return
-     */
-    public static final String getJSONString(final Object... objects) {
-        final JSONObject jsonObject = new JSONObject(8);
-        final int length = objects.length;
-        for (int i = 0; i < length; i++) {
-            Object object = objects[i];
-            if (object instanceof IFileBinaryBody) {
-                continue;
-            }
-            if (object instanceof IStreamBinaryBody) {
-                continue;
-            }
-            jsonObject.put((String) object, objects[++i]);
-        }
-        final String jsonString = jsonObject.toJSONString();
-        return jsonString;
-    }
 }
