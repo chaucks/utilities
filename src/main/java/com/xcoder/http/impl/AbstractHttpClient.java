@@ -168,9 +168,9 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      * @param url     url
      * @param objects objects
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    private final CloseableHttpResponse getCloseableHttpResponse(final CloseableHttpClient client, final String url, final Object... objects) throws Exception {
+    private final CloseableHttpResponse getCloseableHttpResponse(final CloseableHttpClient client, final String url, final Object... objects) throws IOException {
         final HttpRequestBase httpRequestBase = this.getHttpRequestBase(url, objects);
         final CloseableHttpResponse closeableHttpResponse = client.execute(httpRequestBase);
         return closeableHttpResponse;
