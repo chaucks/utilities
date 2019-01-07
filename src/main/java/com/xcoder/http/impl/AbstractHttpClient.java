@@ -208,7 +208,8 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      */
     public static final HttpPost getHttpPostRest(final String url, final Object... objects) {
         final HttpEntity httpEntity = getStringEntity(objects);
-        final HttpPost httpPost = getHttpPost(url, httpEntity);
+        final HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(httpEntity);
         httpPost.addHeader(HTTP.CONTENT_TYPE, APPLICATION_JSON_UTF8_CONTENT_TYPE_STRING);
         return httpPost;
     }
@@ -223,7 +224,8 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      */
     public static final HttpPost getHttpPost(final String url, final Object... objects) {
         final HttpEntity httpEntity = getMultipartEntity(objects);
-        final HttpPost httpPost = getHttpPost(url, httpEntity);
+        final HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(httpEntity);
         httpPost.addHeader(HTTP.CONTENT_TYPE, MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE_STRING);
         return httpPost;
     }
@@ -253,19 +255,6 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
          */
         addBody(builder, objects);
         return builder.build();
-    }
-
-    /**
-     * New HttpPost and set HttpEntity
-     *
-     * @param url        url
-     * @param httpEntity HttpEntity
-     * @return
-     */
-    private static final HttpPost getHttpPost(final String url, final HttpEntity httpEntity) {
-        final HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(httpEntity);
-        return httpPost;
     }
 
     /**
