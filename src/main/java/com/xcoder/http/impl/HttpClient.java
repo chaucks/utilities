@@ -1,5 +1,6 @@
 package com.xcoder.http.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.xcoder.utilities.MixedUtensil;
 import org.apache.http.client.methods.HttpRequestBase;
 
@@ -45,6 +46,19 @@ public class HttpClient extends AbstractHttpClient {
      * Rest http post request and response.
      *
      * @param url     url
+     * @param objects objects
+     * @return
+     * @throws Exception
+     */
+    public String postRest(final String url, final Object... objects) throws Exception {
+        final String requestUri = MixedUtensil.appendString(this.serverAddress, url);
+        return AbstractHttpClient.DEFAULT_POST_CLIENT_REST.getResult2(requestUri, objects);
+    }
+
+    /**
+     * Rest http post request and response.
+     *
+     * @param url     url
      * @param clazz   clazz
      * @param objects objects
      * @param <T>     T
@@ -52,8 +66,21 @@ public class HttpClient extends AbstractHttpClient {
      * @throws Exception
      */
     public <T> T postRest(final String url, final Class<T> clazz, final Object... objects) throws Exception {
+        final String rst = this.postRest(url, objects);
+        return JSON.parseObject(rst, clazz);
+    }
+
+    /**
+     * Http post request and response.
+     *
+     * @param url     url
+     * @param objects objects
+     * @return
+     * @throws Exception
+     */
+    public String post(final String url, final Object... objects) throws Exception {
         final String requestUri = MixedUtensil.appendString(this.serverAddress, url);
-        return AbstractHttpClient.DEFAULT_POST_CLIENT_REST.getResult(requestUri, clazz, objects);
+        return AbstractHttpClient.DEFAULT_POST_CLIENT.getResult2(requestUri, objects);
     }
 
     /**
@@ -67,8 +94,8 @@ public class HttpClient extends AbstractHttpClient {
      * @throws Exception
      */
     public <T> T post(final String url, final Class<T> clazz, final Object... objects) throws Exception {
-        final String requestUri = MixedUtensil.appendString(this.serverAddress, url);
-        return AbstractHttpClient.DEFAULT_POST_CLIENT.getResult(requestUri, clazz, objects);
+        final String rst = this.post(url, objects);
+        return JSON.parseObject(rst, clazz);
     }
 
     /**

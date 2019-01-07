@@ -116,7 +116,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      * @throws Exception
      */
     public <T> T getResult(final String url, final Class<T> clazz, final Object... objects) throws Exception {
-        return JSONObject.parseObject(getResult2(url, objects), clazz);
+        return JSON.parseObject(getResult2(url, objects), clazz);
     }
 
     /**
