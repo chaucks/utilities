@@ -248,8 +248,8 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      */
     public static final HttpEntity getMultipartEntity(final Object... objects) {
         final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         builder.setContentType(MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE);
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         /**
          * 添加body
          */
