@@ -18,6 +18,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -115,7 +116,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      * @throws Exception
      */
     public <T> T getResult(final String url, final Class<T> clazz, final Object... objects) throws Exception {
-        return JSONObject.parseObject(getResult(url, objects), clazz);
+        return JSONObject.parseObject(getResult2(url, objects), clazz);
     }
 
     /**
@@ -127,8 +128,8 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      * @throws Exception
      */
     public final String getResult(final String url, final Object... objects) throws Exception {
-        try (final CloseableHttpClient client = HttpClients.createDefault();
-             final CloseableHttpResponse chr = getCloseableHttpResponse(client, url, objects);
+        try (final CloseableHttpClient chc = HttpClients.createDefault();
+             final CloseableHttpResponse chr = getCloseableHttpResponse(chc, url, objects);
              final InputStream is = getInputStream(chr);
              final InputStreamReader isr = getInputStreamReaderUTF8(is);
              final BufferedReader br = new BufferedReader(isr);
@@ -137,7 +138,25 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
             for (String line = br.readLine(); null != line; line = br.readLine()) {
                 sb.append(line);
             }
-            String rst = sb.toString();
+            final String rst = sb.toString();
+            return rst;
+        }
+    }
+
+    /**
+     * Get String result using org.apache.http.util.EntityUtils
+     *
+     * @param url     url
+     * @param objects objects
+     * @return
+     * @throws Exception
+     */
+    public final String getResult2(final String url, final Object... objects) throws Exception {
+        try (final CloseableHttpClient chc = HttpClients.createDefault();
+             final CloseableHttpResponse chr = getCloseableHttpResponse(chc, url, objects);
+             final AutoCloseable ac = this) {
+            final HttpEntity he = chr.getEntity();
+            final String rst = EntityUtils.toString(he, UTF_8_CHAR_SET);
             return rst;
         }
     }
