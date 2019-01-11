@@ -77,6 +77,16 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     private static final ThreadLocal<Collection<AutoCloseable>> AUTO_CLOSEABLE_CACHE = new ThreadLocal<>();
 
     /**
+     * Default buffer capacity
+     */
+    public static final int DEFAULT_STRING_BUFFER_CAPACITY = 1024 * 100;
+
+    /**
+     * Buffer capacity
+     */
+    private volatile int stringBufferCapacity = DEFAULT_STRING_BUFFER_CAPACITY;
+
+    /**
      * Default rest http client
      */
     public static final AbstractHttpClient DEFAULT_POST_CLIENT_REST = new AbstractHttpClient() {
@@ -134,7 +144,7 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
              final InputStreamReader isr = getInputStreamReaderUTF8(is);
              final BufferedReader br = new BufferedReader(isr);
              final AutoCloseable ac = this) {
-            final StringBuilder sb = new StringBuilder(200);
+            final StringBuilder sb = new StringBuilder(this.stringBufferCapacity);
             for (String line = br.readLine(); null != line; line = br.readLine()) {
                 sb.append(line);
             }
@@ -375,4 +385,21 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
         AUTO_CLOSEABLE_CACHE.get().add(body);
     }
 
+    /**
+     * Get StringBuffer capacity
+     *
+     * @return
+     */
+    public final int getStringBufferCapacity() {
+        return this.stringBufferCapacity;
+    }
+
+    /**
+     * Get StringBuffer capacity
+     *
+     * @param stringBufferCapacity stringBufferCapacity
+     */
+    public final void setStringBufferCapacity(final int stringBufferCapacity) {
+        this.stringBufferCapacity = stringBufferCapacity;
+    }
 }
