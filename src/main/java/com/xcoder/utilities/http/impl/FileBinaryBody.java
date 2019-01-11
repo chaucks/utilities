@@ -1,6 +1,6 @@
-package com.xcoder.http.impl;
+package com.xcoder.utilities.http.impl;
 
-import com.xcoder.http.IFileBinaryBody;
+import com.xcoder.utilities.http.IFileBinaryBody;
 import org.apache.http.entity.ContentType;
 
 import java.io.File;

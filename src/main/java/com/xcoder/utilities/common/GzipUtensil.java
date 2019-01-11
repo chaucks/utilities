@@ -1,7 +1,7 @@
-package com.xcoder.utilities;
+package com.xcoder.utilities.common;
 
 import com.alibaba.fastjson.JSON;
-import com.xcoder.IUniversal;
+import com.xcoder.utilities.IUniversal;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,7 +11,9 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * @author chuck lee.
+ * GZIP util
+ *
+ * @author chuck lee
  */
 public class GzipUtensil implements IUniversal {
     /**

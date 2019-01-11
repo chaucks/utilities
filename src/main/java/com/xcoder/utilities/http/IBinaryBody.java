@@ -1,4 +1,4 @@
-package com.xcoder.http;
+package com.xcoder.utilities.http;
 
 import org.apache.http.entity.ContentType;
 

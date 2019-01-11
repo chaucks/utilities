@@ -1,9 +1,9 @@
-package com.xcoder;
+package com.xcoder.utilities;
 
 /**
  * 通用接口
  *
- * @author chuck lee.
+ * @author chuck lee
  */
 public interface IUniversal {
     /**

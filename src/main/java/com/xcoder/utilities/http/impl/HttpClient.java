@@ -1,7 +1,7 @@
-package com.xcoder.http.impl;
+package com.xcoder.utilities.http.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.xcoder.utilities.MixedUtensil;
+import com.xcoder.utilities.common.MixedUtensil;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**

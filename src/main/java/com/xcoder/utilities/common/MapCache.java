@@ -1,4 +1,4 @@
-package com.xcoder.utilities;
+package com.xcoder.utilities.common;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -6,7 +6,9 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * @author chuck lee.
+ * Map cache
+ *
+ * @author chuck lee
  */
 public class MapCache extends ConcurrentHashMap<String, MapCache.Node> implements Runnable {
 

@@ -1,6 +1,6 @@
-package com.xcoder.http.impl;
+package com.xcoder.utilities.http.impl;
 
-import com.xcoder.http.IBinaryBody;
+import com.xcoder.utilities.http.IBinaryBody;
 import org.apache.http.entity.ContentType;
 
 /**

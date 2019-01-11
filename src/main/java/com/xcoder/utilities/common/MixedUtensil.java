@@ -1,6 +1,6 @@
-package com.xcoder.utilities;
+package com.xcoder.utilities.common;
 
-import com.xcoder.IUniversal;
+import com.xcoder.utilities.IUniversal;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 /**
- * A common util file which comtains most used methods.
+ * A common util file which contains most used methods
  *
  * @author chuck lee
  */
