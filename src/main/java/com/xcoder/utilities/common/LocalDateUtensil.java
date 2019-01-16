@@ -141,4 +141,28 @@ public class LocalDateUtensil {
         final long result = epochDay0 - epochDay1;
         return result;
     }
+
+    /**
+     * 一年前距今的天数
+     *
+     * @return
+     */
+    public static final long dayDiffOneYearAgo() {
+        final LocalDate currentDate = LocalDate.now();
+        final LocalDate oneYearAgo = currentDate.minusYears(1L);
+        final long result = dayDiff(currentDate, oneYearAgo);
+        return result;
+    }
+
+    /**
+     * 一年后距今的天数
+     *
+     * @return
+     */
+    public static final long dayDiffOneYearLater() {
+        final LocalDate currentDate = LocalDate.now();
+        final LocalDate oneYearLater = currentDate.plusYears(1L);
+        final long result = dayDiff(oneYearLater, currentDate);
+        return result;
+    }
 }
