@@ -8,7 +8,7 @@ import java.util.Date;
  *
  * @author Chuck Lee
  */
-public class DateUtensil {
+public class LocalDateUtensil {
 
     /**
      * System zoneId
@@ -47,7 +47,6 @@ public class DateUtensil {
      * @return
      */
     public static final Date localDateTimeToDate(final LocalDateTime localDateTime) {
-//        final ZoneId zoneId = ZoneId.systemDefault();
         final ZonedDateTime zonedDateTime = localDateTime.atZone(SYSTEM_ZONE_ID);
         final Instant instant = zonedDateTime.toInstant();
         final Date date = Date.from(instant);
@@ -62,7 +61,6 @@ public class DateUtensil {
      */
     public static final LocalDateTime dateToLocalDateTime(final Date date) {
         final Instant instant = date.toInstant();
-//        final ZoneId zoneId = ZoneId.systemDefault();
         final LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, SYSTEM_ZONE_ID);
         return localDateTime;
     }
@@ -74,7 +72,6 @@ public class DateUtensil {
      * @return
      */
     public static final Date localDateToDate(final LocalDate localDate) {
-//        final ZoneId zoneId = ZoneId.systemDefault();
         final ZonedDateTime zonedDateTime = localDate.atStartOfDay(SYSTEM_ZONE_ID);
         final Instant instant = zonedDateTime.toInstant();
         final Date date = Date.from(instant);
@@ -89,22 +86,8 @@ public class DateUtensil {
      */
     public static final LocalDate dateToLocalDate(final Date date) {
         final Instant instant = date.toInstant();
-//        final ZoneId zoneId = ZoneId.systemDefault();
         final ZonedDateTime zonedDateTime = instant.atZone(SYSTEM_ZONE_ID);
         final LocalDate localDate = zonedDateTime.toLocalDate();
         return localDate;
-    }
-
-    public static void main(String[] args) {
-        localTimeToDate(LocalTime.now());
-        dateToLocalTime(new Date());
-
-        localDateTimeToDate(LocalDateTime.now());
-        dateToLocalDateTime(new Date());
-
-        localDateToDate(LocalDate.now());
-        dateToLocalDate(new Date());
-
-        System.out.println("complete");
     }
 }
