@@ -94,6 +94,30 @@ public class LocalDateUtensil {
     /**
      * Day difference
      *
+     * @param date0      date0
+     * @param localDate1 localDate1
+     * @return
+     */
+    public static final long dayDiff(final Date date0, final LocalDate localDate1) {
+        final LocalDate localDate0 = dateToLocalDate(date0);
+        return dayDiff(localDate0, localDate1);
+    }
+
+    /**
+     * Day difference
+     *
+     * @param localDate0 localDate0
+     * @param date1      date1
+     * @return
+     */
+    public static final long dayDiff(final LocalDate localDate0, final Date date1) {
+        final LocalDate localDate1 = dateToLocalDate(date1);
+        return dayDiff(localDate0, localDate1);
+    }
+
+    /**
+     * Day difference
+     *
      * @param date0 date0
      * @param date1 date1
      * @return
