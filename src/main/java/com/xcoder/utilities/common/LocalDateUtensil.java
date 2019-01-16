@@ -96,7 +96,7 @@ public class LocalDateUtensil {
      *
      * @param date0      date0
      * @param localDate1 localDate1
-     * @return
+     * @return date0 minus localDate1
      */
     public static final long dayDiff(final Date date0, final LocalDate localDate1) {
         final LocalDate localDate0 = dateToLocalDate(date0);
@@ -108,7 +108,7 @@ public class LocalDateUtensil {
      *
      * @param localDate0 localDate0
      * @param date1      date1
-     * @return
+     * @return localDate0 minus date1
      */
     public static final long dayDiff(final LocalDate localDate0, final Date date1) {
         final LocalDate localDate1 = dateToLocalDate(date1);
@@ -120,7 +120,7 @@ public class LocalDateUtensil {
      *
      * @param date0 date0
      * @param date1 date1
-     * @return
+     * @return date0 minus date1
      */
     public static final long dayDiff(final Date date0, final Date date1) {
         final LocalDate localDate0 = dateToLocalDate(date0);
@@ -133,12 +133,12 @@ public class LocalDateUtensil {
      *
      * @param localDate0 localDate0
      * @param localDate1 localDate1
-     * @return
+     * @return localDate0 minus localDate1
      */
     public static final long dayDiff(final LocalDate localDate0, final LocalDate localDate1) {
         final long epochDay0 = localDate0.toEpochDay();
         final long epochDay1 = localDate1.toEpochDay();
-        final long result = epochDay1 - epochDay0;
+        final long result = epochDay0 - epochDay1;
         return result;
     }
 }
