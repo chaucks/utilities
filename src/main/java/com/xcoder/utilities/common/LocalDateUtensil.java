@@ -90,4 +90,31 @@ public class LocalDateUtensil {
         final LocalDate localDate = zonedDateTime.toLocalDate();
         return localDate;
     }
+
+    /**
+     * Day difference
+     *
+     * @param date0 date0
+     * @param date1 date1
+     * @return
+     */
+    public static final long dayDiff(final Date date0, final Date date1) {
+        final LocalDate localDate0 = dateToLocalDate(date0);
+        final LocalDate localDate1 = dateToLocalDate(date1);
+        return dayDiff(localDate0, localDate1);
+    }
+
+    /**
+     * Day difference
+     *
+     * @param localDate0 localDate0
+     * @param localDate1 localDate1
+     * @return
+     */
+    public static final long dayDiff(final LocalDate localDate0, final LocalDate localDate1) {
+        final long epochDay0 = localDate0.toEpochDay();
+        final long epochDay1 = localDate1.toEpochDay();
+        final long result = epochDay1 - epochDay0;
+        return result;
+    }
 }
