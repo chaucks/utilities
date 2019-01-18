@@ -44,7 +44,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * Integer 转 String
      *
-     * @param obj
+     * @param obj obj
      * @return
      */
     public static final String objectToString(final Object obj) {
@@ -54,7 +54,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 字符串拼接
      *
-     * @param objects
+     * @param objects objects
      * @return
      */
     public static final String appendString(Object... objects) {
@@ -68,7 +68,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 数组是否不为null或者非空
      *
-     * @param objects
+     * @param objects objects
      * @return
      */
     public static final boolean arrayNotEmpty(final Object... objects) {
@@ -78,7 +78,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 数组是否null或者空
      *
-     * @param objects
+     * @param objects objects
      * @return
      */
     public static final boolean arrayEmpty(final Object... objects) {
@@ -88,7 +88,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 集合不为null或非空判断
      *
-     * @param collection
+     * @param collection collection
      * @return
      */
     public static final boolean collectionEmpty(final Collection collection) {
@@ -98,7 +98,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 集合不为null或非空判断
      *
-     * @param collection
+     * @param collection collection
      * @return
      */
     public static final boolean collectionNotEmpty(final Collection collection) {
@@ -108,8 +108,8 @@ public class MixedUtensil implements IUniversal {
     /**
      * 数组复制
      *
-     * @param source
-     * @param target
+     * @param source source
+     * @param target target
      * @return
      */
     public static final String[] arrayCopy(final String[] source, final String... target) {
@@ -127,7 +127,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 通过user-agent判断是否ie浏览器
      *
-     * @param userAgent
+     * @param userAgent userAgent
      * @return
      */
     public static final boolean isNotIE(final String userAgent) {
@@ -137,7 +137,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 通过user-agent判断是否ie浏览器
      *
-     * @param userAgent
+     * @param userAgent userAgent
      * @return
      */
     public static final boolean isIE(final String userAgent) {
@@ -155,8 +155,8 @@ public class MixedUtensil implements IUniversal {
     /**
      * 文件下载，文件名编码
      *
-     * @param fileName
-     * @param request
+     * @param fileName fileName
+     * @param request  request
      * @return
      * @throws UnsupportedEncodingException
      */
@@ -169,8 +169,8 @@ public class MixedUtensil implements IUniversal {
     /**
      * 文件下载，文件名编码
      *
-     * @param fileName
-     * @param userAgent
+     * @param fileName  fileName
+     * @param userAgent userAgent
      * @return
      * @throws UnsupportedEncodingException
      */
@@ -186,7 +186,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 判断对象是否不为null
      *
-     * @param object
+     * @param object object
      * @return
      */
     public static final boolean objectNotNull(final Object object) {
@@ -196,7 +196,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 判断对象是否不为null
      *
-     * @param object
+     * @param object object
      * @return
      */
     public static final boolean objectNull(final Object object) {
@@ -206,7 +206,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 数组存在非null对象判断
      *
-     * @param objects
+     * @param objects objects
      * @return
      */
     public static final boolean objectsObjectExists(final Object... objects) {
@@ -224,7 +224,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 数组存在null对象判断
      *
-     * @param objects
+     * @param objects objects
      * @return
      */
     public static final boolean objectsNullExists(final Object... objects) {
@@ -242,7 +242,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 对象null异常检测
      *
-     * @param object
+     * @param object object
      */
     public static final void objectNullPointerException(final Object object) {
         objectNullPointerException(object, "");
@@ -251,8 +251,8 @@ public class MixedUtensil implements IUniversal {
     /**
      * 对象null异常检测
      *
-     * @param object
-     * @param strings
+     * @param object  object
+     * @param strings strings
      */
     public static final void objectNullPointerException(final Object object, final String... strings) {
         if (objectNull(object)) {
@@ -263,7 +263,7 @@ public class MixedUtensil implements IUniversal {
     /**
      * 数组对象null异常检测
      *
-     * @param objects
+     * @param objects objects
      */
     public static final void objectsNullPointerException(final Object... objects) {
         objectsNullPointerException(new String[]{""}, objects);
@@ -272,8 +272,8 @@ public class MixedUtensil implements IUniversal {
     /**
      * 数组对象null异常检测
      *
-     * @param strings
-     * @param objects
+     * @param strings strings
+     * @param objects objects
      */
     public static final void objectsNullPointerException(final String[] strings, final Object... objects) {
         if (objectsNullExists(objects)) {
@@ -284,8 +284,8 @@ public class MixedUtensil implements IUniversal {
     /**
      * 字符串empty异常检测
      *
-     * @param string
-     * @param strings
+     * @param string  string
+     * @param strings strings
      */
     public static final void stringEmptyRuntimeException(final String string, final String... strings) {
         if (StringUtils.isEmpty(string)) {

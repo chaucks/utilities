@@ -19,8 +19,8 @@ public class GzipUtensil implements IUniversal {
     /**
      * gzip 压缩
      *
-     * @param object
-     * @param charset
+     * @param object  object
+     * @param charset charset
      * @return
      * @throws IOException
      */
@@ -59,7 +59,7 @@ public class GzipUtensil implements IUniversal {
     /**
      * gzip 解压
      *
-     * @param bytes
+     * @param bytes bytes
      * @return
      * @throws IOException
      */
@@ -97,7 +97,7 @@ public class GzipUtensil implements IUniversal {
     /**
      * object to string
      *
-     * @param object
+     * @param object object
      * @return
      */
     public static final String objectToString(final Object object) {
@@ -110,8 +110,8 @@ public class GzipUtensil implements IUniversal {
     /**
      * string to byte array
      *
-     * @param string
-     * @param charset
+     * @param string  string
+     * @param charset charset
      * @return
      */
     public static final byte[] stringToByteArray(final String string, final String charset) throws UnsupportedEncodingException {
@@ -124,8 +124,8 @@ public class GzipUtensil implements IUniversal {
     /**
      * byte array to string
      *
-     * @param bytes
-     * @param charset
+     * @param bytes   bytes
+     * @param charset charset
      * @return
      * @throws UnsupportedEncodingException
      */
