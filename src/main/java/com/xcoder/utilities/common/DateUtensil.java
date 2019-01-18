@@ -186,4 +186,44 @@ public class DateUtensil {
         final Date result = calendar.getTime();
         return result;
     }
+
+    /**
+     * Date compare
+     *
+     * @param date0   date0
+     * @param date1   date1
+     * @param pattern pattern
+     * @return
+     */
+    public static final int dateCompare(final Date date0, final Date date1, final String pattern) throws ParseException {
+        return dateCompare(date0, date1, pattern, pattern);
+    }
+
+    /**
+     * Date compare
+     *
+     * @param date0    date0
+     * @param date1    date1
+     * @param pattern0 pattern0
+     * @param pattern1 pattern1
+     * @return
+     * @throws ParseException
+     */
+    public static final int dateCompare(final Date date0, final Date date1
+            , final String pattern0, final String pattern1) throws ParseException {
+        final Date parsedDate0 = parse(date0, pattern0);
+        final Date parsedDate1 = parse(date1, pattern1);
+        return dateCompare(parsedDate0, parsedDate1);
+    }
+
+    /**
+     * Date compare
+     *
+     * @param date0 date0
+     * @param date1 date1
+     * @return
+     */
+    public static final int dateCompare(final Date date0, final Date date1) {
+        return date0.compareTo(date1);
+    }
 }
