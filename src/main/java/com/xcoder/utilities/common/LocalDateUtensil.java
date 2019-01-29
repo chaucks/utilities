@@ -165,4 +165,59 @@ public class LocalDateUtensil {
         final long result = dayDiff(oneYearLater, currentDate);
         return result;
     }
+
+    /**
+     * 获取当前时区offset，北京时间是UTC+8
+     * 即：ZoneOffset.ofHours(8)
+     *
+     * @return
+     */
+    public static final ZoneOffset currentZoneOffset() {
+        return OffsetDateTime.now().getOffset();
+    }
+
+    /**
+     * Unix timestamp
+     *
+     * @param zoneOffset    zoneOffset 时区
+     * @param localDateTime localDateTime
+     * @return
+     */
+    public static final long epochSecond(final ZoneOffset zoneOffset, final LocalDateTime localDateTime) {
+        return localDateTime.toEpochSecond(zoneOffset);
+    }
+
+    /**
+     * Unix timestamp
+     *
+     * @param localDateTime localDateTime
+     * @return
+     */
+    public static final long unixTimestamp(final LocalDateTime localDateTime) {
+        final ZoneOffset zoneOffset = LocalDateUtensil.currentZoneOffset();
+        return epochSecond(zoneOffset, localDateTime);
+    }
+
+    /**
+     * Unix timestamp
+     *
+     * @param zoneOffset zoneOffset 时区
+     * @return
+     */
+    public static final long unixTimestamp(final ZoneOffset zoneOffset) {
+        final LocalDateTime localDateTime = LocalDateTime.now();
+        return epochSecond(zoneOffset, localDateTime);
+    }
+
+
+    /**
+     * Unix timestamp
+     *
+     * @return
+     */
+    public static final long unixTimestamp() {
+        final ZoneOffset zoneOffset = currentZoneOffset();
+        final LocalDateTime localDateTime = LocalDateTime.now();
+        return epochSecond(zoneOffset, localDateTime);
+    }
 }
