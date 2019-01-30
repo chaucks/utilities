@@ -110,13 +110,14 @@ public class MixedUtensil implements IUniversal {
      *
      * @param source source
      * @param target target
+     * @param <T>    object
      * @return
      */
-    public static final String[] arrayCopy(final String[] source, final String... target) {
+    public static final <T> T[] arrayCopy(final T[] source, final T... target) {
         int sourceLength = source.length;
         int targetLength = target.length;
         int targetLengthAddSourceLength = target.length + sourceLength;
-        final String[] result = new String[targetLengthAddSourceLength];
+        final T[] result = (T[]) new Object[targetLengthAddSourceLength];
         System.arraycopy(source, 0, result, targetLength, sourceLength);
         for (int i = 0; i < targetLength; i++) {
             result[i] = target[i];
