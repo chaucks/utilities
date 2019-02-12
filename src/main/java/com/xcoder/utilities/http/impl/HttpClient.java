@@ -1,6 +1,5 @@
 package com.xcoder.utilities.http.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.xcoder.utilities.common.MixedUtensil;
 import org.apache.http.client.methods.HttpRequestBase;
 
@@ -66,8 +65,8 @@ public class HttpClient extends AbstractHttpClient {
      * @throws Exception
      */
     public <T> T postRest(final String url, final Class<T> clazz, final Object... objects) throws Exception {
-        final String rst = this.postRest(url, objects);
-        return JSON.parseObject(rst, clazz);
+        final String requestUri = MixedUtensil.appendString(this.serverAddress, url);
+        return AbstractHttpClient.DEFAULT_POST_CLIENT_REST.getResult(requestUri, clazz, objects);
     }
 
     /**
@@ -94,8 +93,8 @@ public class HttpClient extends AbstractHttpClient {
      * @throws Exception
      */
     public <T> T post(final String url, final Class<T> clazz, final Object... objects) throws Exception {
-        final String rst = this.post(url, objects);
-        return JSON.parseObject(rst, clazz);
+        final String requestUri = MixedUtensil.appendString(this.serverAddress, url);
+        return AbstractHttpClient.DEFAULT_POST_CLIENT.getResult(requestUri, clazz, objects);
     }
 
     /**

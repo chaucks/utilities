@@ -7,6 +7,7 @@ import com.xcoder.utilities.IUniversal;
 import com.xcoder.utilities.common.MixedUtensil;
 import com.xcoder.utilities.http.IFileBinaryBody;
 import com.xcoder.utilities.http.IStreamBinaryBody;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -126,7 +127,11 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      * @throws Exception
      */
     public <T> T getResult(final String url, final Class<T> clazz, final Object... objects) throws Exception {
-        return JSON.parseObject(getResult2(url, objects), clazz);
+        final String result = getResult2(url, objects);
+        if (StringUtils.isNotEmpty(result)) {
+            return JSON.parseObject(result, clazz);
+        }
+        return null;
     }
 
     /**
