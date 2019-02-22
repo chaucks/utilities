@@ -1,119 +1,260 @@
 package com.xcoder.utilities.http.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.xcoder.utilities.common.MixedUtensil;
-import org.apache.http.client.methods.HttpRequestBase;
+import com.xcoder.utilities.http.IFileBinaryBody;
+import com.xcoder.utilities.http.IStreamBinaryBody;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+
+import java.nio.charset.Charset;
 
 /**
- * Simple http client.
+ * Http client
  *
- * @author Chuck Lee.
+ * @author Chuck Lee
  */
-public class HttpClient extends AbstractHttpClient {
+public class HttpClient {
 
     /**
-     * Http server address(ip:port) empty error message.
+     * Rest http client
      */
-    private static final String SERVER_ADDRESS_EMPTY_ERROR_MESSAGE = "Http server address can not be null. Please check...";
+    private final AbstractHttpClient restClient;
 
     /**
-     * Http server address(ip:port)
+     * Multipart http client
      */
-    private String serverAddress;
+    private final AbstractHttpClient multiClient;
 
     /**
      * Constructor
-     */
-    public HttpClient() {
-    }
-
-    /**
-     * Constructor with server address(ip:port)
      *
-     * @param serverAddress ip:port
+     * @param serverAddress serverAddress
      */
     public HttpClient(final String serverAddress) {
-        MixedUtensil.stringEmptyRuntimeException(serverAddress, SERVER_ADDRESS_EMPTY_ERROR_MESSAGE);
-        this.serverAddress = serverAddress;
-    }
+        this.restClient = new AbstractHttpClient(serverAddress) {
+            /**
+             * Charset
+             */
+            private final Charset charset = Charset.forName(UTF_8_CHAR_SET);
 
-    @Override
-    public HttpRequestBase getHttpRequestBase(String url, Object... objects) {
-        return getHttpPost(url, objects);
+            /**
+             * Http entry content type
+             * application/json;charset=utf-8
+             */
+            private final ContentType contentType = ContentType.APPLICATION_JSON.withCharset(this.charset);
+
+            /**
+             * Http header content type
+             */
+            private final String contentTypeS = this.contentType.toString();
+
+            @Override
+            public final String getContentType() {
+                return this.contentTypeS;
+            }
+
+            @Override
+            public final HttpEntity getHttpEntity(final Object... objects) {
+                final String jsonString = this.getJSONString(objects);
+                return new StringEntity(jsonString, this.contentType);
+            }
+
+            @Override
+            public final Charset getCharset() {
+                return this.charset;
+            }
+
+            /**
+             * JSONString
+             *
+             * @param objects objects
+             * @return String
+             */
+            private String getJSONString(final Object... objects) {
+                if (MixedUtensil.arrayEmpty(objects)) {
+                    return "";
+                }
+                final JSONObject json = new JSONObject(8);
+                final int length = objects.length;
+                for (int i = 0; i < length; i++) {
+                    Object object = objects[i];
+                    if (object instanceof IFileBinaryBody) {
+                        continue;
+                    }
+                    if (object instanceof IStreamBinaryBody) {
+                        continue;
+                    }
+                    json.put((String) object, objects[++i]);
+                }
+                final String jsonString = json.toJSONString();
+                return jsonString;
+            }
+        };
+
+        this.multiClient = new AbstractHttpClient(serverAddress) {
+            /**
+             * Charset
+             */
+            private final Charset charset = Charset.forName(UTF_8_CHAR_SET);
+
+            /**
+             * Http entry content type
+             * multipart/form-data;charset=utf-8
+             */
+            private final ContentType contentType = ContentType.MULTIPART_FORM_DATA.withCharset(this.charset);
+
+            /**
+             * Http header content type
+             */
+            private final String contentTypeS = this.contentType.toString();
+
+            @Override
+            public String getContentType() {
+                return this.contentTypeS;
+            }
+
+            @Override
+            public HttpEntity getHttpEntity(final Object... objects) {
+                final MultipartEntityBuilder meb = MultipartEntityBuilder.create();
+                meb.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+                meb.setContentType(this.contentType);
+                this.addBody(meb, objects);
+                return meb.build();
+            }
+
+            @Override
+            public Charset getCharset() {
+                return this.charset;
+            }
+
+            /**
+             * 添加body
+             *
+             * @param builder builder
+             * @param objects objects
+             */
+            private void addBody(final MultipartEntityBuilder builder, final Object... objects) {
+                if (MixedUtensil.arrayEmpty(objects)) {
+                    return;
+                }
+                final int length = objects.length;
+                for (int i = 0; i < length; i++) {
+                    Object object = objects[i];
+                    if (object instanceof IFileBinaryBody) {
+                        this.addBinaryBody(builder, (IFileBinaryBody) object);
+                        continue;
+                    }
+                    if (object instanceof IStreamBinaryBody) {
+                        this.addBinaryBody(builder, (IStreamBinaryBody) object);
+                        continue;
+                    }
+                    this.addTextBody(builder, (String) object, objects[++i]);
+                }
+            }
+
+            /**
+             * 添加文件body
+             *
+             * @param builder builder
+             * @param body    body
+             */
+            private void addBinaryBody(final MultipartEntityBuilder builder, final IFileBinaryBody body) {
+                builder.addBinaryBody(body.getName(), body.getFile(), body.getContentType(), body.getFileName());
+            }
+
+            /**
+             * 添加文件流body
+             *
+             * @param builder builder
+             * @param body    body
+             */
+            private void addBinaryBody(final MultipartEntityBuilder builder, final IStreamBinaryBody body) {
+                builder.addBinaryBody(body.getName(), body.getStream(), body.getContentType(), body.getFileName());
+                // ThreadLocal缓存IStreamBinaryBody
+                cacheIStreamBinaryBody(body);
+            }
+
+            /**
+             * 添加文本body
+             *
+             * @param builder builder
+             * @param name    name
+             * @param object  object
+             */
+            private void addTextBody(final MultipartEntityBuilder builder, final String name, final Object object) {
+                if (object instanceof String) {
+                    builder.addTextBody(name, (String) object, this.contentType);
+                    return;
+                }
+                builder.addTextBody(name, JSON.toJSONString(object), this.contentType);
+            }
+        };
+
     }
 
     /**
-     * Rest http post request and response.
+     * Http post restful
      *
-     * @param url     url
+     * @param router  router
      * @param objects objects
-     * @return
-     * @throws Exception
+     * @return String
+     * @throws Exception Exception
      */
-    public String postRest(final String url, final Object... objects) throws Exception {
-        final String requestUri = MixedUtensil.appendString(this.serverAddress, url);
-        return AbstractHttpClient.DEFAULT_POST_CLIENT_REST.getResult2(requestUri, objects);
+    public final String postRest(final String router, final Object... objects) throws Exception {
+        return this.restClient.post(router, objects);
     }
 
     /**
-     * Rest http post request and response.
+     * Http post restful
      *
-     * @param url     url
+     * @param router  router
      * @param clazz   clazz
      * @param objects objects
-     * @param <T>     T
-     * @return
-     * @throws Exception
+     * @param <T>     Any
+     * @return T Any
+     * @throws Exception Exception
      */
-    public <T> T postRest(final String url, final Class<T> clazz, final Object... objects) throws Exception {
-        final String requestUri = MixedUtensil.appendString(this.serverAddress, url);
-        return AbstractHttpClient.DEFAULT_POST_CLIENT_REST.getResult(requestUri, clazz, objects);
+    public final <T> T postRest(final String router, final Class<T> clazz, final Object... objects) throws Exception {
+        final String result = this.restClient.post(router, objects);
+        if (StringUtils.isEmpty(result)) {
+            return null;
+        }
+        return JSON.parseObject(result, clazz);
     }
 
     /**
-     * Http post request and response.
+     * Http post multipart
      *
-     * @param url     url
+     * @param router  router
      * @param objects objects
-     * @return
-     * @throws Exception
+     * @return String
+     * @throws Exception Exception
      */
-    public String post(final String url, final Object... objects) throws Exception {
-        final String requestUri = MixedUtensil.appendString(this.serverAddress, url);
-        return AbstractHttpClient.DEFAULT_POST_CLIENT.getResult2(requestUri, objects);
+    public final String postMulti(final String router, final Object... objects) throws Exception {
+        return this.multiClient.post(router, objects);
     }
 
     /**
-     * Http post request and response.
+     * Http post multipart
      *
-     * @param url     url
+     * @param router  router
      * @param clazz   clazz
      * @param objects objects
-     * @param <T>     T
-     * @return
-     * @throws Exception
+     * @param <T>     Any
+     * @return T Any
+     * @throws Exception Exception
      */
-    public <T> T post(final String url, final Class<T> clazz, final Object... objects) throws Exception {
-        final String requestUri = MixedUtensil.appendString(this.serverAddress, url);
-        return AbstractHttpClient.DEFAULT_POST_CLIENT.getResult(requestUri, clazz, objects);
+    public final <T> T postMulti(final String router, final Class<T> clazz, final Object... objects) throws Exception {
+        final String result = this.multiClient.post(router, objects);
+        if (StringUtils.isEmpty(result)) {
+            return null;
+        }
+        return JSON.parseObject(result, clazz);
     }
-
-    /**
-     * Get http server address(ip:port)
-     *
-     * @return
-     */
-    public String getServerAddress() {
-        return this.serverAddress;
-    }
-
-    /**
-     * Set http server address(ip:port)
-     *
-     * @param serverAddress ip:port
-     */
-    public void setServerAddress(final String serverAddress) {
-        MixedUtensil.stringEmptyRuntimeException(serverAddress, SERVER_ADDRESS_EMPTY_ERROR_MESSAGE);
-        this.serverAddress = serverAddress;
-    }
-
 }

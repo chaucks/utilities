@@ -1,76 +1,37 @@
 package com.xcoder.utilities.http.impl;
 
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.xcoder.utilities.IUniversal;
 import com.xcoder.utilities.common.MixedUtensil;
-import com.xcoder.utilities.http.IFileBinaryBody;
 import com.xcoder.utilities.http.IStreamBinaryBody;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import java.io.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Abstract Http Client
+ * Abstract http client
  *
- * @author chuck lee.
+ * @author Chuck Lee
  */
-public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
-    /**
-     * multipart/form-data content type
-     */
-    public static final ContentType MULTIPART_FORM_DATA_CONTENT_TYPE = ContentType.MULTIPART_FORM_DATA;
+abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
 
     /**
-     * multipart/form-data utf-8 charset content type
+     * Http server address(ip:port) empty error message.
      */
-    public static final ContentType MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE = MULTIPART_FORM_DATA_CONTENT_TYPE.withCharset(UTF_8_CHAR_SET);
-
-    /**
-     * multipart/form-data content type string
-     */
-    public static final String MULTIPART_FORM_DATA_CONTENT_TYPE_STRING = MULTIPART_FORM_DATA_CONTENT_TYPE.toString();
-
-    /**
-     * multipart/form-data utf-8 charset content type string
-     */
-    public static final String MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE_STRING = MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE.toString();
-
-    /**
-     * application/json content type
-     */
-    public static final ContentType APPLICATION_JSON_CONTENT_TYPE = ContentType.APPLICATION_JSON;
-
-    /**
-     * application/json utf-8 charset content type
-     */
-    public static final ContentType APPLICATION_JSON_UTF8_CONTENT_TYPE = APPLICATION_JSON_CONTENT_TYPE.withCharset(UTF_8_CHAR_SET);
-
-    /**
-     * application/json content type string
-     */
-    public static final String APPLICATION_JSON_CONTENT_TYPE_STRING = APPLICATION_JSON_CONTENT_TYPE.toString();
-
-    /**
-     * application/json utf-8 charset content type string
-     */
-    public static final String APPLICATION_JSON_UTF8_CONTENT_TYPE_STRING = APPLICATION_JSON_UTF8_CONTENT_TYPE.toString();
+    private static final String SERVER_ADDRESS_EMPTY_ERROR_MESSAGE = "Http server address can not be null. Please check...";
 
     /**
      * 文件流暂存，释放资源用
@@ -78,108 +39,99 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     private static final ThreadLocal<Collection<AutoCloseable>> AUTO_CLOSEABLE_CACHE = new ThreadLocal<>();
 
     /**
-     * Default buffer capacity
+     * Http server address
      */
-    public static final int DEFAULT_STRING_BUFFER_CAPACITY = 1024 * 100;
+    private final String serverAddress;
 
     /**
-     * Buffer capacity
-     */
-    private volatile int stringBufferCapacity = DEFAULT_STRING_BUFFER_CAPACITY;
-
-    /**
-     * Default rest http client
-     */
-    public static final AbstractHttpClient DEFAULT_POST_CLIENT_REST = new AbstractHttpClient() {
-        @Override
-        public HttpRequestBase getHttpRequestBase(final String url, final Object... objects) {
-            return getHttpPostRest(url, objects);
-        }
-    };
-
-    /**
-     * Default http client
-     */
-    public static final AbstractHttpClient DEFAULT_POST_CLIENT = new AbstractHttpClient() {
-        @Override
-        public HttpRequestBase getHttpRequestBase(String url, Object... objects) {
-            return getHttpPost(url, objects);
-        }
-    };
-
-    /**
-     * Get HttpRequestBase
+     * Constructor
      *
-     * @param url     url
-     * @param objects objects
-     * @return
+     * @param serverAddress serverAddress can not be empty
      */
-    public abstract HttpRequestBase getHttpRequestBase(final String url, final Object... objects);
-
-    /**
-     * Get Object result
-     *
-     * @param url     url
-     * @param clazz   clazz
-     * @param objects objects
-     * @param <T>     T
-     * @return
-     * @throws Exception
-     */
-    public <T> T getResult(final String url, final Class<T> clazz, final Object... objects) throws Exception {
-        final String result = getResult2(url, objects);
-        if (StringUtils.isNotEmpty(result)) {
-            return JSON.parseObject(result, clazz);
-        }
-        return null;
+    AbstractHttpClient(final String serverAddress) {
+        MixedUtensil.stringEmptyRuntimeException(serverAddress, SERVER_ADDRESS_EMPTY_ERROR_MESSAGE);
+        this.serverAddress = serverAddress;
     }
 
     /**
-     * Get String result
+     * Get http header content type
      *
-     * @param url     url
-     * @param objects objects
-     * @return
-     * @throws Exception
+     * @return String
      */
-    public final String getResult(final String url, final Object... objects) throws Exception {
+    public abstract String getContentType();
+
+    /**
+     * Get http entry
+     *
+     * @param objects objects
+     * @return HttpEntity
+     */
+    public abstract HttpEntity getHttpEntity(final Object... objects);
+
+    /**
+     * Get charset
+     *
+     * @return Charset
+     */
+    public abstract Charset getCharset();
+
+    /**
+     * Http get
+     *
+     * @param router router
+     * @return String
+     * @throws Exception Exception
+     */
+    protected final String get(final String router) throws Exception {
+        final String url = this.getUrl(router);
+        final HttpGet httpGet = new HttpGet(url);
+        httpGet.addHeader(HTTP.CONTENT_TYPE, this.getContentType());
+        return this.execute(httpGet);
+    }
+
+    /**
+     * Http post
+     *
+     * @param router  router
+     * @param objects objects
+     * @return String
+     * @throws Exception Exception
+     */
+    final String post(final String router, final Object... objects) throws Exception {
+        final String url = this.getUrl(router);
+        final HttpPost httpPost = new HttpPost(url);
+        httpPost.addHeader(HTTP.CONTENT_TYPE, this.getContentType());
+        httpPost.setEntity(this.getHttpEntity(objects));
+        return this.execute(httpPost);
+    }
+
+    /**
+     * Execute http request
+     *
+     * @param hrb hrb
+     * @return String
+     * @throws Exception Exception
+     */
+    private String execute(final HttpRequestBase hrb) throws Exception {
         try (final CloseableHttpClient chc = HttpClients.createDefault();
-             final CloseableHttpResponse chr = getCloseableHttpResponse(chc, url, objects);
-             final InputStream is = getInputStream(chr);
-             final InputStreamReader isr = getInputStreamReaderUTF8(is);
-             final BufferedReader br = new BufferedReader(isr);
+             final CloseableHttpResponse chr = chc.execute(hrb);
              final AutoCloseable ac = this) {
-            final StringBuilder sb = new StringBuilder(this.stringBufferCapacity);
-            for (String line = br.readLine(); null != line; line = br.readLine()) {
-                sb.append(line);
+            final StatusLine sl = chr.getStatusLine();
+            final int sc = sl.getStatusCode();
+            if (HttpStatus.SC_OK == sc) {
+                final Charset cs = this.getCharset();
+                final HttpEntity he = chr.getEntity();
+                final String rst = EntityUtils.toString(he, cs);
+                return rst;
             }
-            final String rst = sb.toString();
-            return rst;
+            return null;
         }
     }
 
     /**
-     * Get String result using org.apache.http.util.EntityUtils
+     * Close or release resources
      *
-     * @param url     url
-     * @param objects objects
-     * @return
-     * @throws Exception
-     */
-    public final String getResult2(final String url, final Object... objects) throws Exception {
-        try (final CloseableHttpClient chc = HttpClients.createDefault();
-             final CloseableHttpResponse chr = getCloseableHttpResponse(chc, url, objects);
-             final AutoCloseable ac = this) {
-            final HttpEntity he = chr.getEntity();
-            final String rst = EntityUtils.toString(he, UTF_8_CHAR_SET);
-            return rst;
-        }
-    }
-
-    /**
-     * 关闭文件流资源
-     *
-     * @throws Exception
+     * @throws Exception Exception
      */
     @Override
     public final void close() throws Exception {
@@ -196,186 +148,17 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     }
 
     /**
-     * Get closeable http response.
+     * Get http url
      *
-     * @param client  client
-     * @param url     url
-     * @param objects objects
-     * @return
-     * @throws IOException
+     * @param router router
+     * @return String
      */
-    private final CloseableHttpResponse getCloseableHttpResponse(final CloseableHttpClient client, final String url, final Object... objects) throws IOException {
-        final HttpRequestBase httpRequestBase = this.getHttpRequestBase(url, objects);
-        final CloseableHttpResponse closeableHttpResponse = client.execute(httpRequestBase);
-        return closeableHttpResponse;
-    }
-
-    /**
-     * 获取流
-     *
-     * @param closeableHttpResponse closeableHttpResponse
-     * @return
-     * @throws IOException
-     */
-    private final InputStream getInputStream(final CloseableHttpResponse closeableHttpResponse) throws IOException {
-        final HttpEntity httpEntity = closeableHttpResponse.getEntity();
-        return httpEntity.getContent();
-    }
-
-    /**
-     * Get UTF-8 InputStreamReader
-     *
-     * @param inputStream inputStream
-     * @return
-     */
-    private static final InputStreamReader getInputStreamReaderUTF8(final InputStream inputStream) throws UnsupportedEncodingException {
-        return new InputStreamReader(inputStream, UTF_8_CHAR_SET);
-    }
-
-    /**
-     * 获取HttpPost
-     *
-     * @param url     url
-     * @param objects objects
-     * @return
-     * @throws IOException
-     */
-    public static final HttpPost getHttpPostRest(final String url, final Object... objects) {
-        final HttpEntity httpEntity = getStringEntity(objects);
-        final HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(httpEntity);
-        httpPost.addHeader(HTTP.CONTENT_TYPE, APPLICATION_JSON_UTF8_CONTENT_TYPE_STRING);
-        return httpPost;
-    }
-
-    /**
-     * 获取HttpPost
-     *
-     * @param url     url
-     * @param objects objects
-     * @return
-     * @throws IOException
-     */
-    public static final HttpPost getHttpPost(final String url, final Object... objects) {
-        final HttpEntity httpEntity = getMultipartEntity(objects);
-        final HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(httpEntity);
-        httpPost.addHeader(HTTP.CONTENT_TYPE, MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE_STRING);
-        return httpPost;
-    }
-
-    /**
-     * String HttpEntity
-     *
-     * @param objects objects
-     * @return
-     */
-    public static final StringEntity getStringEntity(final Object... objects) {
-        return new StringEntity(getJSONString(objects), APPLICATION_JSON_UTF8_CONTENT_TYPE);
-    }
-
-    /**
-     * Multipart HttpEntity
-     *
-     * @param objects objects
-     * @return
-     */
-    public static final HttpEntity getMultipartEntity(final Object... objects) {
-        final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setContentType(MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE);
-        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-        /**
-         * 添加body
-         */
-        addBody(builder, objects);
-        return builder.build();
-    }
-
-    /**
-     * JSONString
-     *
-     * @param objects objects
-     * @return
-     */
-    public static final String getJSONString(final Object... objects) {
-        if (MixedUtensil.arrayEmpty(objects)) {
-            return "";
+    private String getUrl(final String router) {
+        String url = this.serverAddress;
+        if (StringUtils.isNotEmpty(router)) {
+            url = this.serverAddress + router;
         }
-        final JSONObject jsonObject = new JSONObject(8);
-        final int length = objects.length;
-        for (int i = 0; i < length; i++) {
-            Object object = objects[i];
-            if (object instanceof IFileBinaryBody) {
-                continue;
-            }
-            if (object instanceof IStreamBinaryBody) {
-                continue;
-            }
-            jsonObject.put((String) object, objects[++i]);
-        }
-        final String jsonString = jsonObject.toJSONString();
-        return jsonString;
-    }
-
-    /**
-     * 添加body
-     *
-     * @param builder builder
-     * @param objects objects
-     */
-    private static final void addBody(final MultipartEntityBuilder builder, final Object... objects) {
-        if (MixedUtensil.arrayEmpty(objects)) {
-            return;
-        }
-        final int length = objects.length;
-        for (int i = 0; i < length; i++) {
-            Object object = objects[i];
-            if (object instanceof IFileBinaryBody) {
-                addBinaryBody(builder, (IFileBinaryBody) object);
-                continue;
-            }
-            if (object instanceof IStreamBinaryBody) {
-                addBinaryBody(builder, (IStreamBinaryBody) object);
-                continue;
-            }
-            addTextBody(builder, (String) object, objects[++i]);
-        }
-    }
-
-    /**
-     * 添加文件body
-     *
-     * @param builder builder
-     * @param body    body
-     */
-    private static final void addBinaryBody(final MultipartEntityBuilder builder, final IFileBinaryBody body) {
-        builder.addBinaryBody(body.getName(), body.getFile(), body.getContentType(), body.getFileName());
-    }
-
-    /**
-     * 添加文件流body
-     *
-     * @param builder builder
-     * @param body    body
-     */
-    private static final void addBinaryBody(final MultipartEntityBuilder builder, final IStreamBinaryBody body) {
-        builder.addBinaryBody(body.getName(), body.getStream(), body.getContentType(), body.getFileName());
-        cacheIStreamBinaryBody(body);
-    }
-
-    /**
-     * 添加文本body
-     *
-     * @param builder builder
-     * @param name    name
-     * @param object  object
-     */
-    private static final void addTextBody(final MultipartEntityBuilder builder, final String name, final Object object) {
-        if (object instanceof String) {
-            builder.addTextBody(name, (String) object, MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE);
-            return;
-        }
-        builder.addTextBody(name, JSON.toJSONString(object), MULTIPART_FORM_DATA_UTF8_CONTENT_TYPE);
+        return url;
     }
 
     /**
@@ -383,28 +166,10 @@ public abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      *
      * @param body body
      */
-    private static final void cacheIStreamBinaryBody(final IStreamBinaryBody body) {
+    static void cacheIStreamBinaryBody(final IStreamBinaryBody body) {
         if (null == AUTO_CLOSEABLE_CACHE.get()) {
             AUTO_CLOSEABLE_CACHE.set(new ArrayList<>(4));
         }
         AUTO_CLOSEABLE_CACHE.get().add(body);
-    }
-
-    /**
-     * Get StringBuffer capacity
-     *
-     * @return
-     */
-    public final int getStringBufferCapacity() {
-        return this.stringBufferCapacity;
-    }
-
-    /**
-     * Get StringBuffer capacity
-     *
-     * @param stringBufferCapacity stringBufferCapacity
-     */
-    public final void setStringBufferCapacity(final int stringBufferCapacity) {
-        this.stringBufferCapacity = stringBufferCapacity;
     }
 }
