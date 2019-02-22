@@ -4,7 +4,7 @@ import com.xcoder.utilities.IUniversal;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -303,5 +303,34 @@ public class MixedUtensil implements IUniversal {
         return DEFAULT_DTF.format(LocalDateTime.now());
     }
 
+    /**
+     * Get request body string
+     *
+     * @param request  request
+     * @param csn      csn charset
+     * @param capacity capacity
+     * @return String
+     */
+
+    /**
+     * Read InputStream to String
+     *
+     * @param inputStream inputStream
+     * @param charsetName charsetName
+     * @param capacity    capacity
+     * @return String
+     * @throws IOException IOException
+     */
+    public static String readInputStream(final InputStream inputStream
+            , final String charsetName, final int capacity) throws IOException {
+        try (final BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charsetName))) {
+            final StringBuilder sb = new StringBuilder(capacity);
+            for (String line = br.readLine(); null != line; line = br.readLine()) {
+                sb.append(line);
+            }
+            final String rst = sb.toString();
+            return rst;
+        }
+    }
 
 }
