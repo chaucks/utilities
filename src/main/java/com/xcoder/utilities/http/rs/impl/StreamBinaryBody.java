@@ -1,6 +1,6 @@
-package com.xcoder.utilities.http.impl;
+package com.xcoder.utilities.http.rs.impl;
 
-import com.xcoder.utilities.http.IStreamBinaryBody;
+import com.xcoder.utilities.http.rs.IStreamBinaryBody;
 import org.apache.http.entity.ContentType;
 
 import java.io.InputStream;

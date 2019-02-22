@@ -1,10 +1,10 @@
-package com.xcoder.utilities.http.impl;
+package com.xcoder.utilities.http;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xcoder.utilities.common.MixedUtensil;
-import com.xcoder.utilities.http.IFileBinaryBody;
-import com.xcoder.utilities.http.IStreamBinaryBody;
+import com.xcoder.utilities.http.rs.IFileBinaryBody;
+import com.xcoder.utilities.http.rs.IStreamBinaryBody;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;

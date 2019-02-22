@@ -1,8 +1,8 @@
-package com.xcoder.utilities.http.impl;
+package com.xcoder.utilities.http;
 
 import com.xcoder.utilities.IUniversal;
 import com.xcoder.utilities.common.MixedUtensil;
-import com.xcoder.utilities.http.IStreamBinaryBody;
+import com.xcoder.utilities.http.rs.IStreamBinaryBody;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
