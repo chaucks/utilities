@@ -304,15 +304,6 @@ public class MixedUtensil implements IUniversal {
     }
 
     /**
-     * Get request body string
-     *
-     * @param request  request
-     * @param csn      csn charset
-     * @param capacity capacity
-     * @return String
-     */
-
-    /**
      * Read InputStream to String
      *
      * @param inputStream inputStream
