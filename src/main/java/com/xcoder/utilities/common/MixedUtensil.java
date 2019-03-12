@@ -47,7 +47,7 @@ public class MixedUtensil implements IUniversal {
      * @param obj obj
      * @return
      */
-    public static final String objectToString(final Object obj) {
+    public static String objectToString(final Object obj) {
         return null == obj ? null : String.valueOf(obj);
     }
 
@@ -57,7 +57,7 @@ public class MixedUtensil implements IUniversal {
      * @param objects objects
      * @return
      */
-    public static final String appendString(Object... objects) {
+    public static String appendString(Object... objects) {
         final StringBuffer buffer = new StringBuffer(DEFAULT_STRING_BUFFER_CAPACITY);
         for (Object object : objects) {
             buffer.append(object);
@@ -71,7 +71,7 @@ public class MixedUtensil implements IUniversal {
      * @param objects objects
      * @return
      */
-    public static final boolean arrayNotEmpty(final Object... objects) {
+    public static boolean arrayNotEmpty(final Object... objects) {
         return !arrayEmpty(objects);
     }
 
@@ -81,7 +81,7 @@ public class MixedUtensil implements IUniversal {
      * @param objects objects
      * @return
      */
-    public static final boolean arrayEmpty(final Object... objects) {
+    public static boolean arrayEmpty(final Object... objects) {
         return null == objects || 0 >= objects.length;
     }
 
@@ -91,7 +91,7 @@ public class MixedUtensil implements IUniversal {
      * @param collection collection
      * @return
      */
-    public static final boolean collectionEmpty(final Collection collection) {
+    public static boolean collectionEmpty(final Collection collection) {
         return null == collection || 0 >= collection.size();
     }
 
@@ -101,7 +101,7 @@ public class MixedUtensil implements IUniversal {
      * @param collection collection
      * @return
      */
-    public static final boolean collectionNotEmpty(final Collection collection) {
+    public static boolean collectionNotEmpty(final Collection collection) {
         return !collectionEmpty(collection);
     }
 
@@ -113,7 +113,7 @@ public class MixedUtensil implements IUniversal {
      * @param <T>    object
      * @return
      */
-    public static final <T> T[] arrayCopy(final T[] source, final T... target) {
+    public static <T> T[] arrayCopy(final T[] source, final T... target) {
         int sourceLength = source.length;
         int targetLength = target.length;
         int targetLengthAddSourceLength = target.length + sourceLength;
@@ -131,7 +131,7 @@ public class MixedUtensil implements IUniversal {
      * @param userAgent userAgent
      * @return
      */
-    public static final boolean isNotIE(final String userAgent) {
+    public static boolean isNotIE(final String userAgent) {
         return !isIE(userAgent);
     }
 
@@ -141,7 +141,7 @@ public class MixedUtensil implements IUniversal {
      * @param userAgent userAgent
      * @return
      */
-    public static final boolean isIE(final String userAgent) {
+    public static boolean isIE(final String userAgent) {
         if (userAgent.startsWith("mozilla/5.0")) {
             if (userAgent.endsWith("like gecko")) {
                 return true;
@@ -161,7 +161,7 @@ public class MixedUtensil implements IUniversal {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public static final String getAndEncodingFileName(final String fileName
+    public static String getAndEncodingFileName(final String fileName
             , final HttpServletRequest request) throws UnsupportedEncodingException {
         final String userAgent = request.getHeader("user-agent").toLowerCase();
         return getAndEncodingFileName(fileName, userAgent);
@@ -175,7 +175,7 @@ public class MixedUtensil implements IUniversal {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public static final String getAndEncodingFileName(final String fileName
+    public static String getAndEncodingFileName(final String fileName
             , final String userAgent) throws UnsupportedEncodingException {
         if (isNotIE(userAgent)) {
             return new String(fileName.getBytes(UTF_8_CHAR_SET), ISO_8859_1_CHAR_SET);
@@ -190,7 +190,7 @@ public class MixedUtensil implements IUniversal {
      * @param object object
      * @return
      */
-    public static final boolean objectNotNull(final Object object) {
+    public static boolean objectNotNull(final Object object) {
         return !objectNull(object);
     }
 
@@ -200,7 +200,7 @@ public class MixedUtensil implements IUniversal {
      * @param object object
      * @return
      */
-    public static final boolean objectNull(final Object object) {
+    public static boolean objectNull(final Object object) {
         return null == object;
     }
 
@@ -210,7 +210,7 @@ public class MixedUtensil implements IUniversal {
      * @param objects objects
      * @return
      */
-    public static final boolean objectsObjectExists(final Object... objects) {
+    public static boolean objectsObjectExists(final Object... objects) {
         if (objectNull(objects)) {
             return false;
         }
@@ -228,7 +228,7 @@ public class MixedUtensil implements IUniversal {
      * @param objects objects
      * @return
      */
-    public static final boolean objectsNullExists(final Object... objects) {
+    public static boolean objectsNullExists(final Object... objects) {
         if (objectNull(objects)) {
             return true;
         }
@@ -245,7 +245,7 @@ public class MixedUtensil implements IUniversal {
      *
      * @param object object
      */
-    public static final void objectNullPointerException(final Object object) {
+    public static void objectNullPointerException(final Object object) {
         objectNullPointerException(object, "");
     }
 
@@ -255,7 +255,7 @@ public class MixedUtensil implements IUniversal {
      * @param object  object
      * @param strings strings
      */
-    public static final void objectNullPointerException(final Object object, final String... strings) {
+    public static void objectNullPointerException(final Object object, final String... strings) {
         if (objectNull(object)) {
             throw new NullPointerException(appendString(strings));
         }
@@ -266,7 +266,7 @@ public class MixedUtensil implements IUniversal {
      *
      * @param objects objects
      */
-    public static final void objectsNullPointerException(final Object... objects) {
+    public static void objectsNullPointerException(final Object... objects) {
         objectsNullPointerException(new String[]{""}, objects);
     }
 
@@ -276,7 +276,7 @@ public class MixedUtensil implements IUniversal {
      * @param strings strings
      * @param objects objects
      */
-    public static final void objectsNullPointerException(final String[] strings, final Object... objects) {
+    public static void objectsNullPointerException(final String[] strings, final Object... objects) {
         if (objectsNullExists(objects)) {
             throw new NullPointerException(appendString(strings));
         }
@@ -288,7 +288,7 @@ public class MixedUtensil implements IUniversal {
      * @param string  string
      * @param strings strings
      */
-    public static final void stringEmptyRuntimeException(final String string, final String... strings) {
+    public static void stringEmptyRuntimeException(final String string, final String... strings) {
         if (StringUtils.isEmpty(string)) {
             throw new RuntimeException(appendString(strings));
         }
@@ -299,7 +299,7 @@ public class MixedUtensil implements IUniversal {
      *
      * @return
      */
-    public static final String getFormatNow() {
+    public static String getFormatNow() {
         return DEFAULT_DTF.format(LocalDateTime.now());
     }
 

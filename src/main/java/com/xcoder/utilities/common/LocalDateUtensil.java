@@ -21,7 +21,7 @@ public class LocalDateUtensil {
      * @param localTime localTime
      * @return
      */
-    public static final Date localTimeToDate(final LocalTime localTime) {
+    public static Date localTimeToDate(final LocalTime localTime) {
         final LocalDate localDate = LocalDate.now();
         final LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
         final Date date = localDateTimeToDate(localDateTime);
@@ -34,7 +34,7 @@ public class LocalDateUtensil {
      * @param date date
      * @return
      */
-    public static final LocalTime dateToLocalTime(final Date date) {
+    public static LocalTime dateToLocalTime(final Date date) {
         final LocalDateTime localDateTime = dateToLocalDateTime(date);
         final LocalTime localTime = localDateTime.toLocalTime();
         return localTime;
@@ -46,7 +46,7 @@ public class LocalDateUtensil {
      * @param localDateTime localDateTime
      * @return
      */
-    public static final Date localDateTimeToDate(final LocalDateTime localDateTime) {
+    public static Date localDateTimeToDate(final LocalDateTime localDateTime) {
         final ZonedDateTime zonedDateTime = localDateTime.atZone(SYSTEM_ZONE_ID);
         final Instant instant = zonedDateTime.toInstant();
         final Date date = Date.from(instant);
@@ -59,7 +59,7 @@ public class LocalDateUtensil {
      * @param date date
      * @return
      */
-    public static final LocalDateTime dateToLocalDateTime(final Date date) {
+    public static LocalDateTime dateToLocalDateTime(final Date date) {
         final Instant instant = date.toInstant();
         final LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, SYSTEM_ZONE_ID);
         return localDateTime;
@@ -71,7 +71,7 @@ public class LocalDateUtensil {
      * @param localDate localDate
      * @return
      */
-    public static final Date localDateToDate(final LocalDate localDate) {
+    public static Date localDateToDate(final LocalDate localDate) {
         final ZonedDateTime zonedDateTime = localDate.atStartOfDay(SYSTEM_ZONE_ID);
         final Instant instant = zonedDateTime.toInstant();
         final Date date = Date.from(instant);
@@ -84,7 +84,7 @@ public class LocalDateUtensil {
      * @param date date
      * @return
      */
-    public static final LocalDate dateToLocalDate(final Date date) {
+    public static LocalDate dateToLocalDate(final Date date) {
         final Instant instant = date.toInstant();
         final ZonedDateTime zonedDateTime = instant.atZone(SYSTEM_ZONE_ID);
         final LocalDate localDate = zonedDateTime.toLocalDate();
@@ -98,7 +98,7 @@ public class LocalDateUtensil {
      * @param localDate1 localDate1
      * @return date0 minus localDate1
      */
-    public static final long dayDiff(final Date date0, final LocalDate localDate1) {
+    public static long dayDiff(final Date date0, final LocalDate localDate1) {
         final LocalDate localDate0 = dateToLocalDate(date0);
         return dayDiff(localDate0, localDate1);
     }
@@ -110,7 +110,7 @@ public class LocalDateUtensil {
      * @param date1      date1
      * @return localDate0 minus date1
      */
-    public static final long dayDiff(final LocalDate localDate0, final Date date1) {
+    public static long dayDiff(final LocalDate localDate0, final Date date1) {
         final LocalDate localDate1 = dateToLocalDate(date1);
         return dayDiff(localDate0, localDate1);
     }
@@ -122,7 +122,7 @@ public class LocalDateUtensil {
      * @param date1 date1
      * @return date0 minus date1
      */
-    public static final long dayDiff(final Date date0, final Date date1) {
+    public static long dayDiff(final Date date0, final Date date1) {
         final LocalDate localDate0 = dateToLocalDate(date0);
         final LocalDate localDate1 = dateToLocalDate(date1);
         return dayDiff(localDate0, localDate1);
@@ -135,7 +135,7 @@ public class LocalDateUtensil {
      * @param localDate1 localDate1
      * @return localDate0 minus localDate1
      */
-    public static final long dayDiff(final LocalDate localDate0, final LocalDate localDate1) {
+    public static long dayDiff(final LocalDate localDate0, final LocalDate localDate1) {
         final long epochDay0 = localDate0.toEpochDay();
         final long epochDay1 = localDate1.toEpochDay();
         final long result = epochDay0 - epochDay1;
@@ -147,7 +147,7 @@ public class LocalDateUtensil {
      *
      * @return
      */
-    public static final long dayDiffOneYearAgo() {
+    public static long dayDiffOneYearAgo() {
         final LocalDate currentDate = LocalDate.now();
         final LocalDate oneYearAgo = currentDate.minusYears(1L);
         final long result = dayDiff(currentDate, oneYearAgo);
@@ -159,7 +159,7 @@ public class LocalDateUtensil {
      *
      * @return
      */
-    public static final long dayDiffOneYearLater() {
+    public static long dayDiffOneYearLater() {
         final LocalDate currentDate = LocalDate.now();
         final LocalDate oneYearLater = currentDate.plusYears(1L);
         final long result = dayDiff(oneYearLater, currentDate);
@@ -172,7 +172,7 @@ public class LocalDateUtensil {
      *
      * @return
      */
-    public static final ZoneOffset currentZoneOffset() {
+    public static ZoneOffset currentZoneOffset() {
         return OffsetDateTime.now().getOffset();
     }
 
@@ -183,7 +183,7 @@ public class LocalDateUtensil {
      * @param localDateTime localDateTime
      * @return
      */
-    public static final long epochSecond(final ZoneOffset zoneOffset, final LocalDateTime localDateTime) {
+    public static long epochSecond(final ZoneOffset zoneOffset, final LocalDateTime localDateTime) {
         return localDateTime.toEpochSecond(zoneOffset);
     }
 
@@ -193,7 +193,7 @@ public class LocalDateUtensil {
      * @param localDateTime localDateTime
      * @return
      */
-    public static final long unixTimestamp(final LocalDateTime localDateTime) {
+    public static long unixTimestamp(final LocalDateTime localDateTime) {
         final ZoneOffset zoneOffset = LocalDateUtensil.currentZoneOffset();
         return epochSecond(zoneOffset, localDateTime);
     }
@@ -204,7 +204,7 @@ public class LocalDateUtensil {
      * @param zoneOffset zoneOffset 时区
      * @return
      */
-    public static final long unixTimestamp(final ZoneOffset zoneOffset) {
+    public static long unixTimestamp(final ZoneOffset zoneOffset) {
         final LocalDateTime localDateTime = LocalDateTime.now();
         return epochSecond(zoneOffset, localDateTime);
     }
@@ -215,7 +215,7 @@ public class LocalDateUtensil {
      *
      * @return
      */
-    public static final long unixTimestamp() {
+    public static long unixTimestamp() {
         final ZoneOffset zoneOffset = currentZoneOffset();
         final LocalDateTime localDateTime = LocalDateTime.now();
         return epochSecond(zoneOffset, localDateTime);

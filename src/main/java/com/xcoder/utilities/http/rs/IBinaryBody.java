@@ -1,5 +1,6 @@
 package com.xcoder.utilities.http.rs;
 
+import com.xcoder.utilities.IUniversal;
 import org.apache.http.entity.ContentType;
 
 /**
@@ -7,7 +8,7 @@ import org.apache.http.entity.ContentType;
  *
  * @author chuck lee.
  */
-public interface IBinaryBody/* extends AutoCloseable*/ {
+public interface IBinaryBody extends IUniversal/*, AutoCloseable*/ {
 
     /**
      * HTTP 参数名

@@ -112,7 +112,7 @@ public class MapCache extends ConcurrentHashMap<String, MapCache.Node> implement
      * @param timeOut timeOut
      * @param time    time
      */
-    private final void tryLockAwait(final long timeOut, final long time) {
+    private void tryLockAwait(final long timeOut, final long time) {
         try {
             if (lock.tryLock(timeOut, TimeUnit.MILLISECONDS)) {
                 this.monitorAwait = true;
@@ -130,7 +130,7 @@ public class MapCache extends ConcurrentHashMap<String, MapCache.Node> implement
      *
      * @param timeOut timeOut
      */
-    private final void tryLockSignal(final long timeOut) {
+    private void tryLockSignal(final long timeOut) {
         try {
             if (this.monitorAwait) {
                 if (lock.tryLock(timeOut, TimeUnit.MILLISECONDS)) {

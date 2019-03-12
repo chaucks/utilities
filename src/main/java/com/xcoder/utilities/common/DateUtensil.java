@@ -19,7 +19,7 @@ public class DateUtensil {
      * @param pattern pattern
      * @return
      */
-    public static final String format(final Date date, final String pattern) {
+    public static String format(final Date date, final String pattern) {
         final SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return format(date, sdf);
     }
@@ -31,7 +31,7 @@ public class DateUtensil {
      * @param sdf  sdf
      * @return
      */
-    public static final String format(final Date date, final SimpleDateFormat sdf) {
+    public static String format(final Date date, final SimpleDateFormat sdf) {
         final String result = sdf.format(date);
         return result;
     }
@@ -44,7 +44,7 @@ public class DateUtensil {
      * @return
      * @throws ParseException
      */
-    public static final Date parse(final Date date, final String pattern) throws ParseException {
+    public static Date parse(final Date date, final String pattern) throws ParseException {
         final SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return parse(date, sdf);
     }
@@ -57,7 +57,7 @@ public class DateUtensil {
      * @return
      * @throws ParseException
      */
-    public static final Date parse(final String date, final String pattern) throws ParseException {
+    public static Date parse(final String date, final String pattern) throws ParseException {
         final SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return parse(date, sdf);
     }
@@ -70,7 +70,7 @@ public class DateUtensil {
      * @return
      * @throws ParseException
      */
-    public static final Date parse(final Date date, final SimpleDateFormat sdf) throws ParseException {
+    public static Date parse(final Date date, final SimpleDateFormat sdf) throws ParseException {
         final String dateString = format(date, sdf);
         final Date result = parse(dateString, sdf);
         return result;
@@ -84,7 +84,7 @@ public class DateUtensil {
      * @return
      * @throws ParseException
      */
-    public static final Date parse(final String date, final SimpleDateFormat sdf) throws ParseException {
+    public static Date parse(final String date, final SimpleDateFormat sdf) throws ParseException {
         final Date result = sdf.parse(date);
         return result;
     }
@@ -95,7 +95,7 @@ public class DateUtensil {
      * @param date date
      * @return
      */
-    public static final Calendar getCalendar(final Date date) {
+    public static Calendar getCalendar(final Date date) {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar;
@@ -109,7 +109,7 @@ public class DateUtensil {
      * @param amount amount
      * @return
      */
-    public static final Date addDate(final Date date, final int field, final int amount) {
+    public static Date addDate(final Date date, final int field, final int amount) {
         final Calendar calendar = getCalendar(date);
         calendar.add(field, amount);
         final Date result = calendar.getTime();
@@ -121,7 +121,7 @@ public class DateUtensil {
      *
      * @return
      */
-    public static final Date lastDayOfMonth() {
+    public static Date lastDayOfMonth() {
         return lastDayOfMonth(new Date());
     }
 
@@ -131,7 +131,7 @@ public class DateUtensil {
      * @param date date
      * @return
      */
-    public static final Date lastDayOfMonth(final Date date) {
+    public static Date lastDayOfMonth(final Date date) {
         return lastDayOfMonth(date, Calendar.getInstance());
     }
 
@@ -142,7 +142,7 @@ public class DateUtensil {
      * @param calendar calendar
      * @return
      */
-    public static final Date lastDayOfMonth(final Date date, final Calendar calendar) {
+    public static Date lastDayOfMonth(final Date date, final Calendar calendar) {
         // 顺序勿动
         calendar.setTime(date);
         calendar.add(Calendar.MONTH, 1);
@@ -156,7 +156,7 @@ public class DateUtensil {
      *
      * @return
      */
-    public static final Date firstDayOfMonth() {
+    public static Date firstDayOfMonth() {
         return firstDayOfMonth(new Date());
     }
 
@@ -166,7 +166,7 @@ public class DateUtensil {
      * @param date date
      * @return
      */
-    public static final Date firstDayOfMonth(final Date date) {
+    public static Date firstDayOfMonth(final Date date) {
         return firstDayOfMonth(date, Calendar.getInstance());
     }
 
@@ -178,7 +178,7 @@ public class DateUtensil {
      * @param calendar calendar
      * @return
      */
-    public static final Date firstDayOfMonth(final Date date, final Calendar calendar) {
+    public static Date firstDayOfMonth(final Date date, final Calendar calendar) {
         // 顺序勿动
         calendar.setTime(date);
         calendar.add(Calendar.MONTH, 0);
@@ -195,7 +195,7 @@ public class DateUtensil {
      * @param pattern pattern
      * @return
      */
-    public static final int dateCompare(final Date date0, final Date date1, final String pattern) throws ParseException {
+    public static int dateCompare(final Date date0, final Date date1, final String pattern) throws ParseException {
         return dateCompare(date0, date1, pattern, pattern);
     }
 
@@ -207,7 +207,7 @@ public class DateUtensil {
      * @param sdf   sdf
      * @return
      */
-    public static final int dateCompare(final Date date0, final Date date1, final SimpleDateFormat sdf) throws ParseException {
+    public static int dateCompare(final Date date0, final Date date1, final SimpleDateFormat sdf) throws ParseException {
         return dateCompare(date0, date1, sdf, sdf);
     }
 
@@ -221,7 +221,7 @@ public class DateUtensil {
      * @return
      * @throws ParseException
      */
-    public static final int dateCompare(final Date date0, final Date date1
+    public static int dateCompare(final Date date0, final Date date1
             , final String pattern0, final String pattern1) throws ParseException {
         final SimpleDateFormat sdf0 = new SimpleDateFormat(pattern0);
         final SimpleDateFormat sdf1 = new SimpleDateFormat(pattern1);
@@ -238,7 +238,7 @@ public class DateUtensil {
      * @return
      * @throws ParseException
      */
-    public static final int dateCompare(final Date date0, final Date date1
+    public static int dateCompare(final Date date0, final Date date1
             , final SimpleDateFormat sdf0, final SimpleDateFormat sdf1) throws ParseException {
         final Date parsedDate0 = parse(date0, sdf0);
         final Date parsedDate1 = parse(date1, sdf1);
@@ -252,7 +252,7 @@ public class DateUtensil {
      * @param date1 date1
      * @return
      */
-    public static final int dateCompare(final Date date0, final Date date1) {
+    public static int dateCompare(final Date date0, final Date date1) {
         return date0.compareTo(date1);
     }
 }

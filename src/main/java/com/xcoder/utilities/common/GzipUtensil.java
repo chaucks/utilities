@@ -24,7 +24,7 @@ public class GzipUtensil implements IUniversal {
      * @return
      * @throws IOException
      */
-    public static final byte[] compress(final Object object, final String charset) throws IOException {
+    public static byte[] compress(final Object object, final String charset) throws IOException {
         if (null == object) {
             return null;
         }
@@ -63,7 +63,7 @@ public class GzipUtensil implements IUniversal {
      * @return
      * @throws IOException
      */
-    public static final byte[] uncompress(final byte[] bytes) throws IOException {
+    public static byte[] uncompress(final byte[] bytes) throws IOException {
         if (MixedUtensil.arrayEmpty(bytes)) {
             return null;
         }
@@ -100,7 +100,7 @@ public class GzipUtensil implements IUniversal {
      * @param object object
      * @return
      */
-    public static final String objectToString(final Object object) {
+    public static String objectToString(final Object object) {
         if (object instanceof String) {
             return (String) object;
         }
@@ -114,7 +114,7 @@ public class GzipUtensil implements IUniversal {
      * @param charset charset
      * @return
      */
-    public static final byte[] stringToByteArray(final String string, final String charset) throws UnsupportedEncodingException {
+    public static byte[] stringToByteArray(final String string, final String charset) throws UnsupportedEncodingException {
         if (null == charset) {
             return string.getBytes();
         }
@@ -129,7 +129,7 @@ public class GzipUtensil implements IUniversal {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public static final String byteArrayToString(final byte[] bytes, final String charset) throws UnsupportedEncodingException {
+    public static String byteArrayToString(final byte[] bytes, final String charset) throws UnsupportedEncodingException {
         if (null == charset) {
             return new String(bytes);
         }
