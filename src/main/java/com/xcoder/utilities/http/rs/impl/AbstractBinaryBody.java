@@ -16,7 +16,7 @@ public abstract class AbstractBinaryBody implements IBinaryBody {
     private ContentType contentType;
 
     public AbstractBinaryBody() {
-        this.contentType = MULTIPART_FORM_DATA;
+        this.contentType = ContentType.MULTIPART_FORM_DATA;
     }
 
     public AbstractBinaryBody(String name) {

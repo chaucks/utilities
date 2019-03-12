@@ -10,11 +10,6 @@ import org.apache.http.entity.ContentType;
 public interface IBinaryBody/* extends AutoCloseable*/ {
 
     /**
-     * MULTIPART_FORM_DATA
-     */
-    ContentType MULTIPART_FORM_DATA = ContentType.MULTIPART_FORM_DATA;
-
-    /**
      * HTTP 参数名
      *
      * @return
