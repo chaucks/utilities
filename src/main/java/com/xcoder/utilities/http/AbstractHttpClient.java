@@ -11,6 +11,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HTTP;
@@ -39,6 +40,11 @@ abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
     private static final ThreadLocal<Collection<AutoCloseable>> AUTO_CLOSEABLE_CACHE = new ThreadLocal<>();
 
     /**
+     * SSLConnectionSocketFactory 4 tls https...
+     */
+    private SSLConnectionSocketFactory sslConnectionSocketFactory;
+
+    /**
      * Http server address
      */
     private final String serverAddress;
@@ -50,7 +56,19 @@ abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      */
     AbstractHttpClient(final String serverAddress) {
         MixedUtensil.stringEmptyRuntimeException(serverAddress, SERVER_ADDRESS_EMPTY_ERROR_MESSAGE);
+        this.sslConnectionSocketFactory = null;
         this.serverAddress = serverAddress;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param sslConnectionSocketFactory sslConnectionSocketFactory
+     * @param serverAddress              serverAddress can not be empty
+     */
+    public AbstractHttpClient(final SSLConnectionSocketFactory sslConnectionSocketFactory, final String serverAddress) {
+        this(serverAddress);
+        this.sslConnectionSocketFactory = sslConnectionSocketFactory;
     }
 
     /**
@@ -113,7 +131,7 @@ abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      * @throws Exception Exception
      */
     private String execute(final HttpRequestBase hrb) throws Exception {
-        try (final CloseableHttpClient chc = HttpClients.createDefault();
+        try (final CloseableHttpClient chc = this.getCloseableHttpClient();
              final CloseableHttpResponse chr = chc.execute(hrb);
              final AutoCloseable ac = this) {
             final StatusLine sl = chr.getStatusLine();
@@ -126,6 +144,18 @@ abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
             }
             return null;
         }
+    }
+
+    /**
+     * Get org.apache.http.impl.client.CloseableHttpClient
+     *
+     * @return CloseableHttpClient
+     */
+    CloseableHttpClient getCloseableHttpClient() {
+        if (null != this.sslConnectionSocketFactory) {
+            return HttpClients.custom().setSSLSocketFactory(this.sslConnectionSocketFactory).build();
+        }
+        return HttpClients.createDefault();
     }
 
     /**
