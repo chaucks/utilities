@@ -1,10 +1,7 @@
 package com.xcoder.utilities.net;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.xcoder.utilities.IUniversal;
 import com.xcoder.utilities.common.MixedUtensil;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -115,10 +112,11 @@ public abstract class AbstractHttpClient implements IUniversal {
      * @throws NoSuchProviderException  NoSuchProviderException
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      */
-    public final String req(String router, String requestMethod, Object... objects) throws IOException
+    public final String request(String router, String requestMethod, Object... objects) throws IOException
             , KeyManagementException, NoSuchProviderException, NoSuchAlgorithmException {
+        LOGGER.debug(MixedUtensil.appendString("requestMethod:", requestMethod));
         String requestUrl = this.getRequestUrl(router);
-        LOGGER.debug(MixedUtensil.appendString("request\tmethod:", requestMethod, "\tUrl:" + requestUrl));
+        LOGGER.debug(MixedUtensil.appendString("requestUrl:", requestUrl));
         HttpsURLConnection conn = (HttpsURLConnection) new URL(requestUrl).openConnection();
         try {
             conn.setRequestMethod(requestMethod);
@@ -157,27 +155,6 @@ public abstract class AbstractHttpClient implements IUniversal {
     }
 
     /**
-     * Do http request
-     *
-     * @param router        router
-     * @param requestMethod requestMethod
-     * @param objects       objects
-     * @return JSONObject
-     * @throws IOException              IOException
-     * @throws KeyManagementException   KeyManagementException
-     * @throws NoSuchProviderException  NoSuchProviderException
-     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
-     */
-    public final JSONObject reqJson(String router, String requestMethod, Object... objects) throws IOException
-            , KeyManagementException, NoSuchProviderException, NoSuchAlgorithmException {
-        String rst = this.req(router, requestMethod, objects);
-        if (StringUtils.isEmpty(rst)) {
-            return null;
-        }
-        return JSON.parseObject(rst);
-    }
-
-    /**
      * Init HttpsURLConnection
      *
      * @param conn conn
@@ -199,19 +176,6 @@ public abstract class AbstractHttpClient implements IUniversal {
      */
     private String getRequestUrl(String router) {
         return MixedUtensil.appendString(this.serverAddress, router);
-    }
-
-    /**
-     * Append String
-     *
-     * @param objects objects
-     * @return String
-     */
-    static String appendString(Object... objects) {
-        if (MixedUtensil.arrayEmpty(objects)) {
-            return "";
-        }
-        return MixedUtensil.appendString(objects);
     }
 
     /**

@@ -15,4 +15,30 @@ public interface IUniversal {
      * UTF-8编码
      */
     String UTF_8_CHAR_SET = "UTF-8";
+
+    /**
+     * Http put request
+     */
+    String HTTP_PUT = "PUT";
+
+    /**
+     * Http get request
+     */
+    String HTTP_GET = "GET";
+
+    /**
+     * Http post request
+     */
+    String HTTP_POST = "POST";
+
+    /**
+     * Http delete request
+     */
+    String HTTP_DELETE = "DELETE";
+
+    /**
+     * Http options request
+     */
+    String HTTP_OPTIONS = "OPTIONS";
+
 }

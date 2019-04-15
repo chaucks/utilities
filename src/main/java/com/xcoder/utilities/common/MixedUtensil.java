@@ -9,6 +9,8 @@ import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A common util file which contains most used methods
@@ -83,6 +85,20 @@ public class MixedUtensil implements IUniversal {
      */
     public static boolean arrayEmpty(final Object... objects) {
         return null == objects || 0 >= objects.length;
+    }
+
+    /**
+     * Get array length
+     *
+     * @param objects array
+     * @return length
+     */
+    public static int getArrayLength(final Object... objects) {
+        if (null == objects) {
+            return -1;
+        }
+        int length = objects.length;
+        return length;
     }
 
     /**
@@ -324,4 +340,39 @@ public class MixedUtensil implements IUniversal {
         }
     }
 
+    /**
+     * 任意String 为empty即返回true
+     *
+     * @param strings strings
+     * @return boolean
+     */
+    public static boolean stringEmptyExists(String... strings) {
+        if (arrayEmpty(strings)) {
+            throw new RuntimeException("String array can not be empty...Please check!");
+        }
+        for (String string : strings) {
+            if (StringUtils.isEmpty(string)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Object array to HashMap
+     *
+     * @param objects [key0, value0, key1, value1, key2, value2...]
+     *                "userName", "xxx", "password", "123"
+     * @return HashMap
+     */
+    public static Map<String, Object> objectsToHashMap(final Object... objects) {
+        final int length = objects.length;
+        final int capacity = length / 2;
+        final Map<String, Object> map = new HashMap<>(capacity);
+        for (int i = 0; i < length; i++) {
+            Object object = objects[i];
+            map.put((String) object, objects[++i]);
+        }
+        return map;
+    }
 }
