@@ -5,11 +5,15 @@ import com.xcoder.utilities.common.MixedUtensil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -117,10 +121,10 @@ public abstract class AbstractHttpClient implements IUniversal {
         LOGGER.debug(MixedUtensil.appendString("requestMethod:", requestMethod));
         String requestUrl = this.getRequestUrl(router);
         LOGGER.debug(MixedUtensil.appendString("requestUrl:", requestUrl));
-        HttpsURLConnection conn = (HttpsURLConnection) new URL(requestUrl).openConnection();
+        HttpURLConnection conn = (HttpURLConnection) new URL(requestUrl).openConnection();
         try {
             conn.setRequestMethod(requestMethod);
-            this.initHttpsURLConnection(conn);
+            this.initHttpURLConnection(conn);
             conn.connect();
 
             if (MixedUtensil.arrayNotEmpty(objects)) {
@@ -155,14 +159,18 @@ public abstract class AbstractHttpClient implements IUniversal {
     }
 
     /**
-     * Init HttpsURLConnection
+     * Init HttpURLConnection
      *
      * @param conn conn
      * @throws NoSuchProviderException  NoSuchProviderException
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      * @throws KeyManagementException   KeyManagementException
      */
-    public void initHttpsURLConnection(HttpsURLConnection conn) throws NoSuchProviderException, NoSuchAlgorithmException, KeyManagementException {
+    public void initHttpURLConnection(HttpURLConnection conn) throws NoSuchProviderException, NoSuchAlgorithmException, KeyManagementException {
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Charset", this.getCharsetOut());
+        conn.setRequestProperty("Connection", "Keep-Alive");
+
         conn.setUseCaches(false);
         conn.setDoOutput(true);
         conn.setDoInput(true);

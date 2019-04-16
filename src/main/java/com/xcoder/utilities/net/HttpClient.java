@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
+import java.net.HttpURLConnection;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -36,11 +37,11 @@ public class HttpClient {
          * @throws KeyManagementException KeyManagementException
          */
         @Override
-        public void initHttpsURLConnection(HttpsURLConnection conn) throws NoSuchProviderException, NoSuchAlgorithmException, KeyManagementException {
-            super.initHttpsURLConnection(conn);
+        public void initHttpURLConnection(HttpURLConnection conn) throws NoSuchProviderException, NoSuchAlgorithmException, KeyManagementException {
+            super.initHttpURLConnection(conn);
             SSLSocketFactory sslSocketFactory = this.getSSLSocketFactory();
             if (null != sslSocketFactory) {
-                conn.setSSLSocketFactory(sslSocketFactory);
+                ((HttpsURLConnection) conn).setSSLSocketFactory(sslSocketFactory);
             }
         }
 
