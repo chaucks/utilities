@@ -128,7 +128,7 @@ public abstract class AbstractHttpClient implements IUniversal {
             conn.connect();
 
             if (MixedUtensil.arrayNotEmpty(objects)) {
-                String content = getRequestContent(objects);
+                String content = this.getRequestContent(objects);
                 LOGGER.debug("request content:" + content);
                 String charsetOut = this.getCharsetOut();
                 LOGGER.debug("request charset:" + charsetOut);
