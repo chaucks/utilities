@@ -255,4 +255,68 @@ public class DateUtensil {
     public static int dateCompare(final Date date0, final Date date1) {
         return date0.compareTo(date1);
     }
+
+    /**
+     * 获取年份季度
+     *
+     * @param date date
+     * @return 年份季度
+     */
+    public static String getYearQuarter(Date date) {
+        return getYearQuarter(date, Calendar.getInstance());
+    }
+
+    /**
+     * 获取年份季度
+     *
+     * @param date     date
+     * @param calendar calendar
+     * @return 年份季度
+     */
+    public static String getYearQuarter(Date date, Calendar calendar) {
+        String quarter = getQuarter(date, calendar);
+        String year = format(date, "yyyy");
+        return MixedUtensil.appendString(year, quarter);
+    }
+
+    /**
+     * 获取季度
+     *
+     * @param date date
+     * @return 季度
+     */
+    public static String getQuarter(Date date) {
+        return getQuarter(date, Calendar.getInstance());
+    }
+
+    /**
+     * 获取季度
+     *
+     * @param date     date
+     * @param calendar calendar
+     * @return 季度
+     */
+    public static String getQuarter(Date date, Calendar calendar) {
+        calendar.setTime(date);
+        switch (calendar.get(Calendar.MONTH)) {
+            case Calendar.JANUARY:
+            case Calendar.FEBRUARY:
+            case Calendar.MARCH:
+                return "01";
+            case Calendar.APRIL:
+            case Calendar.MAY:
+            case Calendar.JUNE:
+                return "02";
+            case Calendar.JULY:
+            case Calendar.AUGUST:
+            case Calendar.SEPTEMBER:
+                return "03";
+            case Calendar.OCTOBER:
+            case Calendar.NOVEMBER:
+            case Calendar.DECEMBER:
+                return "04";
+            default:
+                return "";
+        }
+    }
 }
