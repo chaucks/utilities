@@ -169,7 +169,7 @@ public abstract class AbstractHttpClient implements IUniversal {
     public void initHttpURLConnection(HttpURLConnection conn) throws NoSuchProviderException, NoSuchAlgorithmException, KeyManagementException {
         conn.setRequestProperty("Content-Type", "application/json");
         conn.setRequestProperty("Charset", this.getCharsetOut());
-        conn.setRequestProperty("Connection", "Keep-Alive");
+//        conn.setRequestProperty("Connection", "Keep-Alive");
 
         conn.setUseCaches(false);
         conn.setDoOutput(true);
