@@ -131,6 +131,7 @@ abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
      * @throws Exception Exception
      */
     private String execute(final HttpRequestBase hrb) throws Exception {
+        this.configureHttpRequestBaseBeforeExecute(hrb);
         try (final CloseableHttpClient chc = this.getCloseableHttpClient();
              final CloseableHttpResponse chr = chc.execute(hrb);
              final AutoCloseable ac = this) {
@@ -144,6 +145,15 @@ abstract class AbstractHttpClient implements IUniversal, AutoCloseable {
             }
             return null;
         }
+    }
+
+    /**
+     * Configure org.apache.http.client.methods.HttpRequestBase before execute
+     *
+     * @param hrb org.apache.http.client.methods.HttpRequestBase
+     */
+    void configureHttpRequestBaseBeforeExecute(final HttpRequestBase hrb) {
+
     }
 
     /**
