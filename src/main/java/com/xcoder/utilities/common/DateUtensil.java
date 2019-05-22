@@ -276,7 +276,7 @@ public class DateUtensil {
     public static String getYearQuarter(Date date, Calendar calendar) {
         String quarter = getQuarter(date, calendar);
         String year = format(date, "yyyy");
-        return MixedUtensil.appendString(year, quarter);
+        return year.concat(quarter);
     }
 
     /**
