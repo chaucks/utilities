@@ -26,14 +26,14 @@ public class Io {
      * @date 2019-06-22
      */
     @FunctionalInterface
-    public interface Iw {
+    public interface Ir {
         /**
          * Io write
          *
          * @param buffer buffer
          * @throws IOException IOException
          */
-        void write(byte[] buffer) throws IOException;
+        void read(byte[] buffer) throws IOException;
     }
 
     /**
@@ -71,21 +71,21 @@ public class Io {
      *
      * @param is     is
      * @param length length
-     * @param iw     callback
+     * @param ir     ir
      * @throws IOException          IOException
      * @throws InterruptedException InterruptedException
      */
-    public static void read(final InputStream is, final int available, final int length, final Iw iw) throws IOException {
+    public static void read(final InputStream is, final int available, final int length, final Ir ir) throws IOException {
         for (int i = 0, j = available / length; i < j; i++) {
             byte[] buffer = new byte[length];
             is.read(buffer);
-            iw.write(buffer);
+            ir.read(buffer);
         }
 
         int remain = available % length;
         if (0 < remain) {
             byte[] buffer = new byte[remain];
-            iw.write(buffer);
+            ir.read(buffer);
         }
     }
 
