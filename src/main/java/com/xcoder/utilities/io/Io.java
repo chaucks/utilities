@@ -1,9 +1,9 @@
 package com.xcoder.utilities.io;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 
 /**
  * IO
@@ -110,13 +110,18 @@ public class Io {
         return available;
     }
 
-    public static void closeSockets(Socket... sockets) {
-        for (Socket socket : sockets) {
-            if (null == socket) {
+    /**
+     * Closeable array close
+     *
+     * @param closeables closeables
+     */
+    public static void closeableClose(Closeable... closeables) {
+        for (Closeable closeable : closeables) {
+            if (null == closeable) {
                 continue;
             }
             try {
-                socket.close();
+                closeable.close();
             } catch (Throwable t) {
                 t.printStackTrace();
             }

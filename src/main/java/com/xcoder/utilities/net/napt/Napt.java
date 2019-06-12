@@ -33,7 +33,7 @@ public class Napt {
                 socket1 = serverSocket1.accept();
             } catch (Throwable t) {
                 t.printStackTrace();
-                Io.closeSockets(socket0, socket1);
+                Io.closeableClose(socket0, socket1);
                 continue;
             }
             s2s(socket0, socket1);
@@ -58,7 +58,7 @@ public class Napt {
                 socket1 = new Socket(host1, port1);
             } catch (Throwable t) {
                 t.printStackTrace();
-                Io.closeSockets(socket0, socket1);
+                Io.closeableClose(socket0, socket1);
                 continue;
             }
             s2s(socket0, socket1);
@@ -82,7 +82,7 @@ public class Napt {
                 socket1 = new Socket(host1, port1);
             } catch (Throwable t) {
                 t.printStackTrace();
-                Io.closeSockets(socket0, socket1);
+                Io.closeableClose(socket0, socket1);
                 continue;
             }
             s2s(socket0, socket1);
