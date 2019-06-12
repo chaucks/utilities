@@ -59,7 +59,7 @@ public class Io {
     public static void i2o(final InputStream is, final OutputStream os, final long expire
             , final long timeout, final int length) throws IOException, InterruptedException {
         final int available = available(is, expire, timeout);
-        read(is, available, length, buffer -> os.write(buffer));
+        read(is, available, length, os::write);
         os.flush();
     }
 
@@ -75,7 +75,7 @@ public class Io {
         int available = available(is, DEFAULT_EXPIRE, DEFAULT_TIMEOUT);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
-            read(is, available, available, buffer -> bos.write(buffer));
+            read(is, available, available, bos::write);
             return bos.toByteArray();
         } finally {
             closeableClose(bos);
