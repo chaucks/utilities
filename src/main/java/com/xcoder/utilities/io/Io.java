@@ -105,7 +105,7 @@ public class Io {
             if (expire < System.currentTimeMillis() - t0) {
                 throw new RuntimeException("Waiting available time out......");
             }
-            Thread.currentThread().wait(timeout);
+            Thread.sleep(timeout);
         }
         return available;
     }
