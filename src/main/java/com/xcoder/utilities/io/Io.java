@@ -92,6 +92,9 @@ public class Io {
      * @throws InterruptedException InterruptedException
      */
     public static void read(final InputStream is, final int available, final int length, final Ir ir) throws IOException {
+        if (length > available) {
+            throw new RuntimeException("length greater than available...");
+        }
         for (int i = 0, j = available / length; i < j; i++) {
             byte[] buffer = new byte[length];
             is.read(buffer);
