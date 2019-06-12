@@ -61,25 +61,21 @@ public class Io {
      */
     public static void i2o(final InputStream is, final OutputStream os, final long expire
             , final long timeout, final int length) throws IOException, InterruptedException {
-        read(is, expire, timeout, length, buffer -> os.write(buffer));
+        final int available = available(is, expire, timeout);
+        read(is, available, length, buffer -> os.write(buffer));
         os.flush();
     }
 
     /**
      * Read input stream
      *
-     * @param is      is
-     * @param expire  expire
-     * @param timeout timeout
-     * @param length  length
-     * @param iw      callback
-     * @return available bytes
+     * @param is     is
+     * @param length length
+     * @param iw     callback
      * @throws IOException          IOException
      * @throws InterruptedException InterruptedException
      */
-    public static int read(final InputStream is, final long expire, final long timeout
-            , final int length, final Iw iw) throws IOException, InterruptedException {
-        final int available = available(is, expire, timeout);
+    public static void read(final InputStream is, final int available, final int length, final Iw iw) throws IOException {
         for (int i = 0, j = available / length; i < j; i++) {
             byte[] buffer = new byte[length];
             is.read(buffer);
@@ -91,7 +87,6 @@ public class Io {
             byte[] buffer = new byte[remain];
             iw.write(buffer);
         }
-        return available;
     }
 
     /**
