@@ -73,12 +73,13 @@ public class Io {
      * @param timeout timeout
      * @param length  length
      * @param iw      callback
+     * @return available bytes
      * @throws IOException          IOException
      * @throws InterruptedException InterruptedException
      */
-    public static void read(final InputStream is, final long expire, final long timeout
+    public static int read(final InputStream is, final long expire, final long timeout
             , final int length, final Iw iw) throws IOException, InterruptedException {
-        int available = available(is, expire, timeout);
+        final int available = available(is, expire, timeout);
         for (int i = 0, j = available / length; i < j; i++) {
             byte[] buffer = new byte[length];
             is.read(buffer);
@@ -90,6 +91,7 @@ public class Io {
             byte[] buffer = new byte[remain];
             iw.write(buffer);
         }
+        return available;
     }
 
     /**
