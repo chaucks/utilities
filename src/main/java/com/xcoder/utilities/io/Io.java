@@ -20,7 +20,7 @@ public class Io {
     private static final int DEFAULT_LENGTH = 102400;
 
     /**
-     * Write interface
+     * Read byte array buffer
      *
      * @author Chuck Lee
      * @date 2019-06-22
@@ -28,7 +28,7 @@ public class Io {
     @FunctionalInterface
     public interface Ir {
         /**
-         * Io write
+         * Io read
          *
          * @param buffer buffer
          * @throws IOException IOException
