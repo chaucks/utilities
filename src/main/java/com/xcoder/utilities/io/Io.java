@@ -72,7 +72,7 @@ public class Io {
      * @throws InterruptedException InterruptedException
      */
     public static byte[] read(final InputStream is) throws IOException, InterruptedException {
-        int available = Io.available(is, 10000, 50);
+        int available = Io.available(is, DEFAULT_EXPIRE, DEFAULT_TIMEOUT);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             Io.read(is, available, available, buffer -> bos.write(buffer));
