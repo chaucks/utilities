@@ -72,10 +72,10 @@ public class Io {
      * @throws InterruptedException InterruptedException
      */
     public static byte[] read(final InputStream is) throws IOException, InterruptedException {
-        int available = Io.available(is, DEFAULT_EXPIRE, DEFAULT_TIMEOUT);
+        int available = available(is, DEFAULT_EXPIRE, DEFAULT_TIMEOUT);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
-            Io.read(is, available, available, buffer -> bos.write(buffer));
+            read(is, available, available, buffer -> bos.write(buffer));
             return bos.toByteArray();
         } finally {
             closeableClose(bos);
