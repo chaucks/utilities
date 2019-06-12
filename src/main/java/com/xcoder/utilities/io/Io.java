@@ -1,9 +1,6 @@
 package com.xcoder.utilities.io;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * IO
@@ -64,6 +61,25 @@ public class Io {
         final int available = available(is, expire, timeout);
         read(is, available, length, buffer -> os.write(buffer));
         os.flush();
+    }
+
+    /**
+     * Read input stream get byte array
+     *
+     * @param is InputStream
+     * @return byte array
+     * @throws IOException          IOException
+     * @throws InterruptedException InterruptedException
+     */
+    public static byte[] read(final InputStream is) throws IOException, InterruptedException {
+        int available = Io.available(is, 10000, 50);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            Io.read(is, available, available, buffer -> bos.write(buffer));
+            return bos.toByteArray();
+        } finally {
+            closeableClose(bos);
+        }
     }
 
     /**
