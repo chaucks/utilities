@@ -60,7 +60,7 @@ public class Io {
             , final long timeout, final int length) throws IOException, InterruptedException {
         final int available = available(is, expire, timeout);
         read(is, available, length, os::write);
-        os.flush();
+        flushableFlush(os);
     }
 
     /**
