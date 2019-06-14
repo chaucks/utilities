@@ -130,6 +130,24 @@ public class Io {
     }
 
     /**
+     * Flushable array flush
+     *
+     * @param flushableArray flushableArray
+     */
+    public static void flushableFlush(Flushable... flushableArray) {
+        for (Flushable flushable : flushableArray) {
+            if (null == flushable) {
+                continue;
+            }
+            try {
+                flushable.flush();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * Closeable array close
      *
      * @param closeables closeables
