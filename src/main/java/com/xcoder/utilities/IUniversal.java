@@ -41,4 +41,12 @@ public interface IUniversal {
      */
     String HTTP_OPTIONS = "OPTIONS";
 
+    /**
+     * Http user agent
+     */
+    String USER_AGENT = "user-agent";
+
+    String ATTACHMENT_HEADER_NAME = "Content-Disposition";
+
+    String ATTACHMENT_HEADER_VALUE_PREFIX = "attachment;filename=";
 }

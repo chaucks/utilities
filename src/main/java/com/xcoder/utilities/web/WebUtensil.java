@@ -1,5 +1,8 @@
 package com.xcoder.utilities.web;
 
+import com.xcoder.utilities.IBrowser;
+import com.xcoder.utilities.IUniversal;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -13,17 +16,7 @@ import java.util.function.Function;
  *
  * @author Chuck Lee
  */
-public class WebUtensil {
-
-    private static final String USER_AGENT = "user-agent";
-
-    private static final String ISO8859_1 = "iso8859-1";
-
-    private static final String UTF_8 = "utf-8";
-
-    private static final String ATTACHMENT_HEADER_NAME = "Content-Disposition";
-
-    private static final String ATTACHMENT_HEADER_VALUE_PREFIX = "attachment;filename=";
+public class WebUtensil implements IUniversal, IBrowser {
 
     /**
      * Poi file output write
@@ -33,11 +26,11 @@ public class WebUtensil {
      * @param request  request
      * @param response response
      */
-    public static void poiWrite(String fileName, Function<OutputStream, Void> function, HttpServletRequest request, HttpServletResponse response) {
+    public static void outWrite(String fileName, Function<OutputStream, Void> function, HttpServletRequest request, HttpServletResponse response) {
         String encodingFileName = getAndEncodingFileName(fileName, request.getHeader(USER_AGENT));
         String attachmentHeaderValue = ATTACHMENT_HEADER_VALUE_PREFIX.concat(encodingFileName);
         response.addHeader(ATTACHMENT_HEADER_NAME, attachmentHeaderValue);
-        response.setCharacterEncoding(UTF_8);
+        response.setCharacterEncoding(UTF_8_CHAR_SET);
         try (OutputStream out = response.getOutputStream()) {
             function.apply(out);
             out.flush();
@@ -56,10 +49,10 @@ public class WebUtensil {
     public static String getAndEncodingFileName(final String fileName, final String userAgent) {
         try {
             if (isNotIE(userAgent.toLowerCase())) {
-                return new String(fileName.getBytes(UTF_8), ISO8859_1);
+                return new String(fileName.getBytes(UTF_8_CHAR_SET), ISO_8859_1_CHAR_SET);
             }
             // IE 360 QQ兼容
-            return URLEncoder.encode(fileName, UTF_8);
+            return URLEncoder.encode(fileName, UTF_8_CHAR_SET);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
@@ -82,11 +75,11 @@ public class WebUtensil {
      * @return true is ie
      */
     public static boolean isIE(final String userAgent) {
-        if (userAgent.startsWith("mozilla/5.0")) {
-            if (userAgent.endsWith("like gecko")) {
+        if (userAgent.startsWith(MOZILLA50)) {
+            if (userAgent.endsWith(LIKEGECKO)) {
                 return true;
             }
         }
-        return userAgent.contains("msie");
+        return userAgent.contains(MSIE);
     }
 }
